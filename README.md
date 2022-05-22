@@ -32,21 +32,47 @@ The free5GC is an open-source project for 5th generation (5G) mobile core networ
 For more information, please refer to [free5GC official site](https://free5gc.org/).
 
 ## Installing
-### Use script
-This script will install and build the following environment:
-- Go
-- openNetVM
-- onvm-free5GC
-
-```sh
-source ./build_L25GC.sh 2>&1 | tee error.txt
-```
+麻煩你補一下了 感謝~
 
 ## Runing
-Change into directory of LL5gc
-```
+1. **First, we have to change the mac address of DN & AN**
+    ```
+    cd onvm-upf/5gc/upf_u_complete/
+    vim upf_u.txt
+    ```
+    Change two MAC Address base on your own enviroment setup. 
+    ```
+    # DN MAC Address
+    0a:c1:b2:37:42:a0
+    # AN MAC Address
+    5c:3d:1d:aa:b1:43
+    ```
+    
+3. **Setting up DPDK manually**
 
-```
+    (Change back to directory of LL5gc)
+    ```
+    ./onvm-upf/dpdk/usertools/dpdk-setup.sh
+    ```
+
+    * Press [38] to compile x86_64-native-linuxapp-gcc version
+    * Press [45] to install igb_uio driver for Intel NICs
+    * Press [49] to setup 1024 2MB hugepages
+    * Press [51] to register the Ethernet ports
+    * Press [62] to quit the tool
+
+    (After these steps, dpdk should be set up)
+
+4. **Run openNetVM manager first**
+    ```
+    sudo ./run_manager.sh [onvm-upf PATH]
+    ```
+5. **Run whole core network on the other terminal**
+
+    (Make sure to run on root privilege)
+    ```
+    sudo ./run_LLfree5gc.sh [onvm-free5gc3.0.5 PATH] [onvm-upf PATH]
+    ```
 
 
 
