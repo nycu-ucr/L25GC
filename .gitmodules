@@ -4,3 +4,12 @@
 [submodule "onvm-free5gc3.0.5"]
 	path = onvm-free5gc3.0.5
 	url = https://github.com/nctu-ucr/onvm-free5gc3.0.5.git
+[submodule "logger_util"]
+	path = logger_util
+	url = https://github.com/nctu-ucr/logger_util.git
+[submodule "test-script3.0.5"]
+	path = test-script3.0.5
+	url = https://github.com/nctu-ucr/test-script3.0.5.git
+[submodule "onvm-pfcp3.0.5"]
+	path = onvm-pfcp3.0.5
+	url = https://github.com/nctu-ucr/onvm-pfcp3.0.5.git

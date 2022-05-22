@@ -42,21 +42,6 @@ case $node_type in
 
 
     "5GC") # echo '5GC'
-    echo "========= Download nctu-ucr/onvm-upf ========="
-    git clone https://github.com/nctu-ucr/onvm-upf.git
-
-    echo "========= Download nctu-ucr/logger_util ========="
-    git clone https://github.com/nctu-ucr/logger_util.git
-
-    echo "========= Download nctu-ucr/test-script3.0.5 ========="
-    git clone https://github.com/nctu-ucr/test-script3.0.5.git
-
-    echo "========= Download nctu-ucr/onvm-pfcp3.0.5 ========="
-    git clone https://github.com/nctu-ucr/onvm-pfcp3.0.5.git
-
-    echo "========= Download nctu-ucr/onvm-free5gc3.0.5 ========="
-    git clone https://github.com/nctu-ucr/onvm-free5gc3.0.5.git
-
     echo "========= Check whether GO is installed ========="
     if command -v go >/dev/null 2>&1; then 
         echo 'exists go, remove the existing version and install Go 1.15.8:'
@@ -89,13 +74,18 @@ case $node_type in
     sudo apt -y install git gcc g++ cmake autoconf libtool pkg-config libmnl-dev libyaml-dev
     go get -u github.com/sirupsen/logrus
 
+
+    echo "========= Sync and Update submoudle ========="
+    cd $workdir
+    git submodule sync
+    git submodule update --init
+
     echo "========= Build onvm-upf ========="
     sudo apt-get install -y build-essential linux-headers-$(uname -r) git bc
     sudo apt-get install -y python3
     sudo apt-get install -y libnuma-dev
     
     cd $workdir/onvm-upf
-    # git checkout chu-upf
     git submodule sync
     git submodule update --init
     echo export ONVM_HOME=$(pwd) >> ~/.bashrc
@@ -163,6 +153,7 @@ case $node_type in
     make udr
     
     cp $workdir/onvm-free5gc3.0.5/ipid.yaml $workdir/onvm-free5gc3.0.5/bin/ipid.yaml
+    echo "========= Build LL5GC Done ========="
     ;;
 
 
