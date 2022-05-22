@@ -32,7 +32,15 @@ The free5GC is an open-source project for 5th generation (5G) mobile core networ
 For more information, please refer to [free5GC official site](https://free5gc.org/).
 
 ## Installing
-麻煩你補一下了 感謝~
+### Use script
+This script will install and build the following environment:
+- Go
+- openNetVM
+- onvm-free5GC
+
+```sh
+source ./build_L25GC.sh 2>&1 | tee error.txt
+```
 
 ## Runing
 Change into directory of LL5gc
