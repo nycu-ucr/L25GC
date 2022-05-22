@@ -1,6 +1,6 @@
-[submodule "onvm-free5gc3.0.5"]
-	path = onvm-freeg5c3.0.5
-	url = https://github.com/nctu-ucr/onvm-free5gc3.0.5.git
 [submodule "onvm-upf"]
 	path = onvm-upf
 	url = https://github.com/nctu-ucr/onvm-upf.git
+[submodule "onvm-free5gc3.0.5"]
+	path = onvm-free5gc3.0.5
+	url = https://github.com/nctu-ucr/onvm-free5gc3.0.5.git
