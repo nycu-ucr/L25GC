@@ -5,9 +5,9 @@ echo -n "Select the node tpye: UERAN | 5GC | DN: "
 read node_type
 node_name=$(hostname)
 
-homedir=$(eval echo "~$USER")
-echo "Home directory is $homedir"
-cd $homedir
+workdir=$(pwd)
+echo "Working directory is $workdir"
+cd $workdir
 
 echo "Start to configure $node_type on $node_name ..."
 case $node_type in
@@ -16,7 +16,7 @@ case $node_type in
     git clone https://github.com/nctu-ucr/test-packet.git
     # run utlity script to modify gtp_packet.py
     echo "Modify pcap file path"
-    sed -i 's#\/home\/chu52016#'$homedir'#g' $homedir/test-packet/gtp_packet.py
+    sed -i 's#\/home\/chu52016#'$workdir'#g' $workdir/test-packet/gtp_packet.py
     echo "ATTENTION: the mac needs to be configured manually"
 
     # Generate GTP with test environment
@@ -30,7 +30,7 @@ case $node_type in
     sudo apt-get install -y build-essential cmake linux-headers-`uname -r` pciutils libnuma-dev
     
     echo "Build MoonGen..."
-    cd $homedir/MoonGen
+    cd $workdir/MoonGen
     ./build.sh
     
     # Set up hugepages
@@ -92,7 +92,7 @@ case $node_type in
     sudo apt-get install -y python3
     sudo apt-get install -y libnuma-dev
     
-    cd $homedir/onvm-upf
+    cd $workdir/onvm-upf
     # git checkout chu-upf
     git submodule sync
     git submodule update --init
@@ -112,36 +112,36 @@ case $node_type in
     make
     
     echo "========= Build onvm-free5GC3.0.5 ========="
-    cd $homedir/onvm-free5gc3.0.5
+    cd $workdir/onvm-free5gc3.0.5
+    git submodule sync
     git submodule update --init
     echo "modify go.mod in each NFs"
     declare -a NFs=("amf" "ausf" "pcf" "udm" "udr" "smf" "nrf" "nssf")
     for nf in ${NFs[@]}
     do
-        sed -i '$a\replace github.com/free5gc/pfcp => '$homedir'/onvm-pfcp3.0.5/' $homedir/onvm-free5gc3.0.5/NFs/$nf/go.mod
-        sed -i '$a\replace github.com/free5gc/logger_util => '$homedir'/logger_util/' $homedir/onvm-free5gc3.0.5/NFs/$nf/go.mod
+        sed -i '$a\replace github.com/free5gc/pfcp => '$workdir'/onvm-pfcp3.0.5/' $workdir/onvm-free5gc3.0.5/NFs/$nf/go.mod
+        sed -i '$a\replace github.com/free5gc/logger_util => '$workdir'/logger_util/' $workdir/onvm-free5gc3.0.5/NFs/$nf/go.mod
     done
 
     echo "Download go module in onvm-pfcp3.0.5"
-    cd $homedir/onvm-pfcp3.0.5
+    cd $workdir/onvm-pfcp3.0.5
     go mod download
     echo "Go to onvmNet repository"
-    #cd $homedir'/go/pkg/mod/github.com/nctu-ucr/onvmNet v0.0.0-20210117143316-cd80cac36575/'
-    cd $homedir'/go/pkg/mod/github.com/nctu-ucr/onvm!net@v0.0.0-20210117143316-cd80cac36575/'
+    cd $HOME'/go/pkg/mod/github.com/nctu-ucr/onvm!net@v0.0.0-20210117143316-cd80cac36575/'
     sudo chmod +w ./*
-    cp ./ipid.yaml $homedir/onvm-free5gc3.0.5
-    cp ./onvmConfig.json $homedir/
+    cp ./ipid.yaml $workdir/onvm-free5gc3.0.5
+    cp ./onvmConfig.json $workdir/
     echo "Modify conn.go"
-    sudo sed -i 's#\/root#'$homedir'#g' conn.go
+    sudo sed -i 's#\/root#'$workdir'#g' conn.go
     echo "Modify ipid.yaml"
-    sed -i 's#ID:\ 2#ID:\ 4#g' $homedir/onvm-free5gc3.0.5/ipid.yaml
-    sed -i 's#ID:\ 1#ID:\ 2#g' $homedir/onvm-free5gc3.0.5/ipid.yaml
-    sed -i 's#ID:\ 4#ID:\ 1#g' $homedir/onvm-free5gc3.0.5/ipid.yaml
+    sed -i 's#ID:\ 2#ID:\ 4#g' $workdir/onvm-free5gc3.0.5/ipid.yaml
+    sed -i 's#ID:\ 1#ID:\ 2#g' $workdir/onvm-free5gc3.0.5/ipid.yaml
+    sed -i 's#ID:\ 4#ID:\ 1#g' $workdir/onvm-free5gc3.0.5/ipid.yaml
     echo "Modify conn.c"
-    sudo sed -i 's#\/root\/onvmNet#'$homedir'#g' conn.c
+    sudo sed -i 's#\/root\/onvmNet#'$workdir'#g' conn.c
 
-    echo "Go to $homedir/onvm-free5gc3.0.5 and build NFs"
-    cd $homedir/onvm-free5gc3.0.5
+    echo "Go to $workdir/onvm-free5gc3.0.5 and build NFs"
+    cd $workdir/onvm-free5gc3.0.5
     go env -w GOPRIVATE=github.com/nctu-ucr/*
     echo "Build smf"
     make smf
@@ -160,7 +160,7 @@ case $node_type in
     echo "Build udr"
     make udr
     
-    cp $homedir/onvm-free5gc3.0.5/ipid.yaml $homedir/onvm-free5gc3.0.5/bin/ipid.yaml
+    cp $workdir/onvm-free5gc3.0.5/ipid.yaml $workdir/onvm-free5gc3.0.5/bin/ipid.yaml
     ;;
 
 
