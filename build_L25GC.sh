@@ -64,6 +64,7 @@ case $node_type in
         sudo rm -rf /usr/local/go
         wget https://dl.google.com/go/go1.15.8.linux-amd64.tar.gz
         sudo tar -C /usr/local -zxvf go1.15.8.linux-amd64.tar.gz
+        rm go1.15.8.linux-amd64.tar.gz
     else 
         echo 'no exists go'
         wget https://dl.google.com/go/go1.15.8.linux-amd64.tar.gz
@@ -75,6 +76,7 @@ case $node_type in
         echo 'export PATH=$PATH:$GOPATH/bin:$GOROOT/bin' >> ~/.bashrc
         echo 'export GO111MODULE=auto' >> ~/.bashrc
         source ~/.bashrc
+        rm go1.15.8.linux-amd64.tar.gz
     fi
 
     echo "========= Install control-plane supporting packages ========="
