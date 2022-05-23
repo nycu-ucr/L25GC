@@ -74,7 +74,7 @@ source ./build_L25GC.sh 2>&1 | tee error.txt
 
 4. **Run openNetVM manager first**
     ```
-    sudo ./run_manager.sh [onvm-upf PATH]
+    ./run_manager.sh [onvm-upf PATH]
     ```
 5. **Run whole core network on the other terminal**
 
