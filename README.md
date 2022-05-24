@@ -111,7 +111,15 @@ source ./build_free5GC.sh 2>&1 | tee error_free5GC.txt
    ```
    sudo kill -9 <pid>
    ```
-
+## Troublesome
+1. Some time test procedue may fail, clear out mogoDB then try it again.
+   ```
+    mongo --eval "db.dropDatabase()" free5gc
+   ```
+2. Make sure to terminate all NFs
+   ```
+   sudo ./force_kill.sh
+   ```
 
 
 
