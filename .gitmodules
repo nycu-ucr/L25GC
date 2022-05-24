@@ -13,3 +13,9 @@
 [submodule "onvm-pfcp3.0.5"]
 	path = onvm-pfcp3.0.5
 	url = https://github.com/nctu-ucr/onvm-pfcp3.0.5.git
+[submodule "kernel-upf"]
+	path = kernel-upf
+	url = https://github.com/nctu-ucr/upf-new.git
+[submodule "kernel-free5gc3.0.5"]
+	path = kernel-free5gc3.0.5
+	url = https://github.com/nctu-ucr/kernel-free5gc3.0.5.git
