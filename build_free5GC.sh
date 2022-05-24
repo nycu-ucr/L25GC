@@ -60,6 +60,23 @@ git checkout kernel
 git submodule sync
 git submodule update --init
 
-make
+echo "Build smf"
+make smf
+echo "Build amf"
+make amf
+echo "Build nssf"
+make nssf
+echo "Build pcf"
+make pcf
+echo "Build nrf"
+make nrf
+echo "Build ausf"
+make ausf
+echo "Build udm"
+make udm
+echo "Build udr"
+make udr
+echo "Build UPF"
+make upf
 
 echo "========= free5GC is set up ========="
