@@ -53,6 +53,16 @@ source ./build_free5GC.sh 2>&1 | tee error_free5GC.txt
 ```
 
 ## Runing
+### Kernal free5GC
+1. **Change to directory of kernal-free5gc3.0.5**
+    ```
+    cd kernel-free5gc3.0.5
+    ```
+2.  **Run the core network**
+    ```
+    ./run.sh
+    ```
+### LL5GC
 1. **First, we have to change the mac address of DN & AN**
     ```
     cd onvm-upf/5gc/upf_u_complete/
@@ -92,6 +102,15 @@ source ./build_free5GC.sh 2>&1 | tee error_free5GC.txt
     sudo ./run_LLfree5gc.sh [onvm-free5gc3.0.5 PATH] [onvm-upf PATH]
     ```
 
+## Terminate onvm manager manualy (optional)
+1. Find the PID of onvm manager
+   ```
+   ps -aux |  grep onvm
+   ```
+2. Kill the PID of onvm manager (may have more than one process)
+   ```
+   sudo kill -9 <pid>
+   ```
 
 
 
