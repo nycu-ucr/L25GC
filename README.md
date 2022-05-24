@@ -32,16 +32,25 @@ The free5GC is an open-source project for 5th generation (5G) mobile core networ
 For more information, please refer to [free5GC official site](https://free5gc.org/).
 
 ## Installing
-### Use script
+### LL5GC
 This script will install and build the following environment:
 - Go
 - openNetVM
 - onvm-free5GC
 
 ```sh
-source ./build_L25GC.sh 2>&1 | tee error.txt
+source ./build_L25GC.sh 2>&1 | tee error_LL5GC.txt
 ```
 
+### Kernel free5GC
+This script will install and build the following environment:
+- Go
+- free5GCv3.0.5
+
+```sh
+git checkout kernel
+source ./build_free5GC.sh 2>&1 | tee error_free5GC.txt
+```
 
 ## Runing
 1. **First, we have to change the mac address of DN & AN**
