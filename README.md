@@ -48,7 +48,6 @@ This script will install and build the following environment:
 - free5GCv3.0.5
 
 ```shell
-LL5gc$ git checkout kernel
 LL5gc$ source ./build_free5GC.sh 2>&1 | tee error_free5GC.txt
 ```
 
