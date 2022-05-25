@@ -17,4 +17,4 @@ sleep 1.0
 
 tmux send-keys -t $CORE_PANE "./run_nosmfupf.sh" Enter
 sleep 5.0
-tmux send-keys -t $SMF_PANE "./smf" Enter
+tmux send-keys -t $SMF_PANE "sudo ./smf" Enter
