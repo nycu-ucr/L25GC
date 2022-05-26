@@ -44,12 +44,17 @@ case $node_type in
     "5GC") # echo '5GC'
     echo "========= Check whether GO is installed ========="
     if command -v go >/dev/null 2>&1; then 
-        echo 'exists go, remove the existing version and install Go 1.15.8:'
-        # this assumes your current version of Go is in the default location
-        sudo rm -rf /usr/local/go
-        wget https://dl.google.com/go/go1.15.8.linux-amd64.tar.gz
-        sudo tar -C /usr/local -zxvf go1.15.8.linux-amd64.tar.gz
-        rm go1.15.8.linux-amd64.tar.gz
+        version=$(go version | awk '{print $3}')
+        if [ $version == 'go1.15.8' ]; then
+            echo "Current go version is $version"
+        else
+            echo 'exists go, remove the existing version and install Go 1.15.8:'
+            # this assumes your current version of Go is in the default location
+            sudo rm -rf /usr/local/go
+            wget https://dl.google.com/go/go1.15.8.linux-amd64.tar.gz
+            sudo tar -C /usr/local -zxvf go1.15.8.linux-amd64.tar.gz
+            rm go1.15.8.linux-amd64.tar.gz
+        fi
     else 
         echo 'no exists go'
         wget https://dl.google.com/go/go1.15.8.linux-amd64.tar.gz
@@ -194,4 +199,3 @@ case $node_type in
     *) echo 'Configuration is terminated. Please select one of UERAN | 5GC | DN'
     ;;
 esac
-exit 0
