@@ -8,7 +8,7 @@ workdir=$(pwd)
 echo "Working directory is $workdir"
 cd $workdir
 
-echo "Start to test $test_type on $node_name ..."
+echo "[Start $test_type on $node_name]"
 case $test_type in
     "TestRegistration")
     cd test-script3.0.5/
