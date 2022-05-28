@@ -170,9 +170,9 @@ ip address add 192.168.0.1 dev enp6s0f1
 sudo ip route add 60.60.0.0/24 dev enp6s0f1
 sudo arp -s 60.60.0.1 2c:f0:5d:91:45:91          /* MAC address of enp6s0f0 */
 ```
-3. Change the DN IP address in python_client.py
+3. Change the DN IP address in python_server.py
 ``` shell
-LL5gc$ vim ./test-script3.0.5/python_client.py
+remote-executor$ vim python_server.py
 ```
 ```python=
 #!/usr/bin/env python3
@@ -181,6 +181,10 @@ import socket, os
 
 HOST = '10.10.2.45'  # Standard loopback interface address     /* IP of Host3 */
 PORT = 65432        # Port to listen on (non-privileged ports are > 1023)
+```
+4. Run python_server.py on Host3
+```
+remote-executor$ python3 python_server.py
 ```
     
 ## Testing
