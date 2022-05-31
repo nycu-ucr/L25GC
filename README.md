@@ -208,8 +208,8 @@ remote-executor$ python3 python_server.py
 
 
 
-## Troublesome
-### Terminate onvm manager manualy (optional)
+## FAQ
+### How to terminate onvm manager manualy
 1. Find the PID of onvm manager
    ```console
    ps -aux |  grep onvm
@@ -218,7 +218,7 @@ remote-executor$ python3 python_server.py
    ```console
    sudo kill -9 <pid>
    ```
-### Clear core network process and database
+### How to clear core network process and database
 1. Some time test procedue may fail, clear out mogoDB then try it again.
    ```console
     mongo --eval "db.dropDatabase()" free5gc
