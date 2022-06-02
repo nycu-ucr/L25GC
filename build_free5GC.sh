@@ -61,7 +61,6 @@ git submodule update --init
 
 echo "========= Build Kernel free5GC ========="
 cd $workdir/kernel-free5gc3.0.5
-git checkout kernel
 git submodule sync
 git submodule update --init
 
