@@ -13,7 +13,7 @@ echo "Start to configure $node_type on $node_name ..."
 case $node_type in
     "UERAN") # echo 'UERAN'
     echo "Download test-packet repository for MoonGen"
-    git clone https://github.com/nctu-ucr/test-packet.git
+    git clone https://github.com/nycu-ucr/test-packet.git
     # run utlity script to modify gtp_packet.py
     echo "Modify pcap file path"
     sed -i 's#\/home\/chu52016#'$workdir'#g' $workdir/test-packet/gtp_packet.py
@@ -112,19 +112,19 @@ case $node_type in
     cd $workdir/onvm-free5gc3.0.5
     git submodule sync
     git submodule update --init
-    echo "modify go.mod in each NFs"
-    declare -a NFs=("amf" "ausf" "pcf" "udm" "udr" "smf" "nrf" "nssf")
-    for nf in ${NFs[@]}
-    do
-        sed -i '$a\replace github.com/free5gc/pfcp => '$workdir'/onvm-pfcp3.0.5/' $workdir/onvm-free5gc3.0.5/NFs/$nf/go.mod
-        sed -i '$a\replace github.com/free5gc/logger_util => '$workdir'/logger_util/' $workdir/onvm-free5gc3.0.5/NFs/$nf/go.mod
-    done
+    #echo "modify go.mod in each NFs"
+    #declare -a NFs=("amf" "ausf" "pcf" "udm" "udr" "smf" "nrf" "nssf")
+    #for nf in ${NFs[@]}
+    #do
+    #    sed -i '$a\replace github.com/free5gc/pfcp => '$workdir'/onvm-pfcp3.0.5/' $workdir/onvm-free5gc3.0.5/NFs/$nf/go.mod
+    #    sed -i '$a\replace github.com/free5gc/logger_util => '$workdir'/logger_util/' $workdir/onvm-free5gc3.0.5/NFs/$nf/go.mod
+    #done
 
     echo "Download go module in onvm-pfcp3.0.5"
     cd $workdir/onvm-pfcp3.0.5
     go mod download
     echo "Go to onvmNet repository"
-    cd $HOME'/go/pkg/mod/github.com/nctu-ucr/onvm!net@v0.0.0-20210117143316-cd80cac36575/'
+    cd $HOME'/go/pkg/mod/github.com/nycu-ucr/onvm!net@v0.0.0-20210117143316-cd80cac36575/'
     sudo chmod +w ./*
     cp ./ipid.yaml $workdir/onvm-free5gc3.0.5
     cp ./onvmConfig.json $workdir/
@@ -139,7 +139,7 @@ case $node_type in
 
     echo "Go to $workdir/onvm-free5gc3.0.5 and build NFs"
     cd $workdir/onvm-free5gc3.0.5
-    go env -w GOPRIVATE=github.com/nctu-ucr/*
+    go env -w GOPRIVATE=github.com/nycu-ucr/*
     echo "Build smf"
     make smf
     echo "Build amf"
@@ -168,7 +168,7 @@ case $node_type in
     sudo apt-get install -y python3
     sudo apt-get install -y libnuma-dev
     sudo apt-get update
-    git clone https://github.com/nctu-ucr/onvm-upf.git
+    git clone https://github.com/nycu-ucr/onvm-upf.git
     cd onvm-upf
     git submodule sync
     git submodule update --init
