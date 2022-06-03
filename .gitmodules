@@ -1,9 +1,6 @@
 [submodule "onvm-upf"]
 	path = onvm-upf
 	url = https://github.com/nycu-ucr/onvm-upf.git
-[submodule "onvm-free5gc3.0.5"]
-	path = onvm-free5gc3.0.5
-	url = https://github.com/nycu-ucr/onvm-free5gc3.0.5
 [submodule "logger_util"]
 	path = logger_util
 	url = https://github.com/nycu-ucr/logger_util
@@ -19,3 +16,7 @@
 [submodule "kernel-free5gc3.0.5"]
 	path = kernel-free5gc3.0.5
 	url = https://github.com/nycu-ucr/kernel-free5gc3.0.5
+[submodule "onvm-free5gc3.0.5"]
+	path = onvm-free5gc3.0.5
+	url = https://github.com/nycu-ucr/onvm-free5gc3.0.5.git
+	branch = main
