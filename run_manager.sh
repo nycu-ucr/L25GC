@@ -1,6 +1,6 @@
 #!/bin/bash
 
-UPF_PATH=$1
+UPF_PATH="./onvm-upf"
 
 if [ -z "$UPF_PATH" ] ; then
   echo "Usage: $0 <UPF_PATH>"
