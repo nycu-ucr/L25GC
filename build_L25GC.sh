@@ -124,7 +124,7 @@ case $node_type in
     cd $workdir/onvm-pfcp3.0.5
     go mod download
     echo "Go to onvmNet repository"
-    cd $HOME'/go/pkg/mod/github.com/nycu-ucr/onvm!net@v0.0.0-20210117143316-cd80cac36575/'
+    cd $HOME'/go/pkg/mod/github.com/nycu-ucr/onvm!net@v0.0.0-20220603095325-79bca2f2efde/'
     sudo chmod +w ./*
     cp ./ipid.yaml $workdir/onvm-free5gc3.0.5
     cp ./onvmConfig.json $workdir/
