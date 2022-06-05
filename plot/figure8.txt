@@ -1,0 +1,4 @@
+UE-Registration 0.136 0.240
+Establishment 0.077 0.156
+N2-handover 0.132 0.222
+Paing 0.027 0.056

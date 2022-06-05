@@ -1,4 +1,4 @@
-# LL5gc
+# L25gc
 
 [TODO]
 
@@ -32,14 +32,14 @@ The free5GC is an open-source project for 5th generation (5G) mobile core networ
 For more information, please refer to [free5GC official site](https://free5gc.org/).
 
 ## Installing
-### LL5GC
+### L25GC
 This script will install and build the following environment:
 - Go
 - openNetVM
 - onvm-free5GC
 
 ```shell
-LL5gc$ source ./build_L25GC.sh 2>&1 | tee error_LL5GC.txt
+l25gc$ source ./build_L25GC.sh 2>&1 | tee error_l25gc.txt
 ```
 
 ### Kernel free5GC
@@ -48,24 +48,31 @@ This script will install and build the following environment:
 - free5GCv3.0.5
 
 ```shell
-LL5gc$ source ./build_free5GC.sh 2>&1 | tee error_free5GC.txt
+l25gc$ source ./build_free5GC.sh 2>&1 | tee error_free5GC.txt
+```
+
+### Plot
+This script will install and build the following environment:
+- Gnuplot
+```shell
+l25gc$ source ./build_plot.sh 2>&1 | tee error_plot.txt
 ```
 
 ## Runing
 ### Kernal free5GC
 1. **Change to directory of kernal-free5gc3.0.5**
     ```shell
-    LL5gc$ cd kernel-free5gc3.0.5
+    l25gc$ cd kernel-free5gc3.0.5
     ```
 2.  **Run the core network**
     ```shell
-    LL5gc$ sudo ./run.sh
+    l25gc$ sudo ./run.sh
     ```
-### LL5GC
+### L25GC
 
 1. **Setting up DPDK manually**
     ```shell
-    LL5gc$ ./onvm-upf/dpdk/usertools/dpdk-setup.sh
+    l25gc$ ./onvm-upf/dpdk/usertools/dpdk-setup.sh
     ```
 
     * Press [38] to compile x86_64-native-linuxapp-gcc version
@@ -78,13 +85,13 @@ LL5gc$ source ./build_free5GC.sh 2>&1 | tee error_free5GC.txt
 
 2. **Run openNetVM manager first**
     ```shell
-    LL5gc$ ./run_manager.sh [onvm-upf PATH]
+    l25gc$ ./run_manager.sh [onvm-upf PATH]
     ```
 3. **Run whole core network on the other terminal**
 
     (Make sure to run on root privilege)
     ```shell
-    LL5gc$ sudo ./run_LLfree5gc.sh [onvm-free5gc3.0.5 PATH] [onvm-upf PATH]
+    l25gc$ sudo ./run_LLfree5gc.sh [onvm-free5gc3.0.5 PATH] [onvm-upf PATH]
     ```
 
 ## Test enviroment setup
@@ -110,8 +117,8 @@ sudo systemctl stop ufw
 
 2. Change the mac address of DN & AN for onvm-upf
 ```shell=
-LL5gc$ cd onvm-upf/5gc/upf_u_complete/
-LL5gc/onvm-upf/5gc/upf_u_complete$ vim upf_u.txt
+l25gc$ cd onvm-upf/5gc/upf_u_complete/
+l25gc/onvm-upf/5gc/upf_u_complete$ vim upf_u.txt
 ``` 
 ```shell=
 # DN MAC Address
@@ -122,8 +129,8 @@ LL5gc/onvm-upf/5gc/upf_u_complete$ vim upf_u.txt
 
 3. Chang the kernal-upf config
 ```shell=
-LL5gc$ cd kernal-free5gc3.0.5/NFs/upf/build/config/
-LL5gc/kernal-free5gc3.0.5/NFs/upf/build/config$ vim upfcfg.yaml
+l25gc$ cd kernal-free5gc3.0.5/NFs/upf/build/config/
+l25gc/kernal-free5gc3.0.5/NFs/upf/build/config$ vim upfcfg.yaml
 ``` 
 ```c
   # The IP list of the N3/N9 interfaces on this UPF
@@ -145,7 +152,7 @@ LL5gc/kernal-free5gc3.0.5/NFs/upf/build/config$ vim upfcfg.yaml
 
 4. Change the DN IP address in python_client.py
 ``` shell
-LL5gc$ vim ./test-script3.0.5/python_client.py
+l25gc$ vim ./test-script3.0.5/python_client.py
 ```
 ```python=
 #!/usr/bin/env python3
@@ -193,16 +200,16 @@ remote-executor$ python3 python_server.py
 
 2.  **Run the test script, then enter one of the test case**
     ```shell=
-    LL5gc$ ./test.sh
+    l25gc$ ./test.sh
     Select the test type: TestRegistration | TestN2Handover | TestPaging:
     ```
     
-### LL5GC
-1. **Run up LL5GC**
+### L25GC
+1. **Run up L25GC**
 
 2.  **Run the test script, then enter one of the test case**
     ```shell=
-    LL5gc$ ./test.sh
+    l25gc$ ./test.sh
     Select the test type: TestRegistration | TestN2Handover | TestPaging:
     ```
 
