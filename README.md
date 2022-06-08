@@ -27,8 +27,13 @@ The free5GC is an open-source project for 5th generation (5G) mobile core networ
 
 For more information, please refer to [free5GC official site](https://free5gc.org/).
 
-## [Expirement Environment Setup]
-**<font color="ff0000">(We use our environment for example, you may need to do some change base on yours)</font>**
+# L25GC: A Low Latency 5G Core Network based on High-Performance NFV Platforms
+
+## [Section1] Expirement Environment Setup
+<font color="ff0000">**(Warning: the expirement requires 3 physical hosts equiped with DPDK-supported NICs)**</font>
+* We use following environment as the experiment example. 
+* When you run the experiment flow, appropriately adjusting parameters, such as the interface name and the MAC address, may be necessary depending on your system.
+
 ![](https://i.imgur.com/ErwJJzB.png)
 
 ### <font color="blue">Host1 (UE & RAN)</font>
@@ -50,20 +55,24 @@ UERAN
 
 #### 3. Modify the `$HOME/test-packet/gtp_packet.py`
 
-Change the following global variables.
+Set following global variables.
 ```bash=
+# These are based on your environment
 SRC_MAC = "3c:fd:fe:73:82:a0" # MAC address of Host 1
 DST_MAC = "3c:fd:fe:73:86:50" # MAC address of Host 2
+
+# These are required
 SRC_OUTER_IP = "10.100.200.1" # RAN IP address
 DST_OUTER_IP = "10.100.200.3" # UPF IP address
-SRC_INNER_IP = "60.60.0.1" # UE IP address
-DST_INNER_IP = "192.168.0.1" # DN IP address
+SRC_INNER_IP = "60.60.0.1"    # UE IP address
+DST_INNER_IP = "192.168.0.1"  # DN IP address
 ```
 
 
 ### <font color="blue">Host2 (Core Network)</font>
 #### 1. Clone the l25gc into host2
 ```shell
+$ cd $HOME
 $ git clone https://github.com/nycu-ucr/l25gc.git
 ```
 #### 2. Install L25GC
@@ -73,6 +82,7 @@ This script will install and build the following environment:
 - onvm-free5GC
 
 ```shell
+$ cd $HOME/l25gc
 l25gc$ source ./build_L25GC.sh 2>&1 | tee error_l25gc.txt
 ```
 
@@ -82,6 +92,7 @@ This script will install and build the following environment:
 - free5GCv3.0.5
 
 ```shell
+$ cd $HOME/l25gc
 l25gc$ source ./build_free5GC.sh 2>&1 | tee error_free5GC.txt
 ```
 
@@ -90,6 +101,7 @@ This script will install and build the following environment:
 - Gnuplot
 - Expirement version smf
 ```shell
+$ cd $HOME/l25gc
 l25gc$ source ./build_expirement.sh 2>&1 | tee error_expirement.txt
 ```
 
@@ -106,28 +118,28 @@ sudo sysctl -w net.ipv4.ip_forward=1
 sudo systemctl stop ufw
 ```
 
-* Change the mac address of DN & AN for onvm-upf
+* Set the MAC address of DN & AN for onvm-upf
 ```shell=
-l25gc$ cd onvm-upf/5gc/upf_u_complete/
+$ cd $HOME/l25gc/onvm-upf/5gc/upf_u_complete/
 l25gc/onvm-upf/5gc/upf_u_complete$ vim upf_u.txt
 ``` 
 ```shell=
 # DN MAC Address
-0a:c1:b2:37:42:a0                               /* MAC address of enp6s0f1 */
+0a:c1:b2:37:42:a0                      /* MAC address of enp6s0f1 */
 # AN MAC Address
-5c:3d:1d:aa:b1:43
+5c:3d:1d:aa:b1:43                      /* MAC address of Host1 NIC */
 ```
 
-* Change the kernel-upf config
+* Set the kernel-upf config
 ```shell=
-l25gc$ cd kernel-free5gc3.0.5/NFs/upf/build/config/
+$ cd $HOME/l25gc/kernel-free5gc3.0.5/NFs/upf/build/config/
 l25gc/kernel-free5gc3.0.5/NFs/upf/build/config$ vim upfcfg.yaml
 ``` 
 ```c
   # The IP list of the N3/N9 interfaces on this UPF
   # If there are multiple connection, set addr to 0.0.0.0 or list all the addresses
   gtpu:
-    - addr: 10.100.200.3                   /* Here IP of enp1s0f0 */
+    - addr: 10.100.200.3                   /* Here is IP of enp1s0f0 */
     # [optional] gtpu.name
     # - name: upf.5gc.nctu.me
     # [optional] gtpu.ifname
@@ -136,13 +148,14 @@ l25gc/kernel-free5gc3.0.5/NFs/upf/build/config$ vim upfcfg.yaml
   # The DNN list supported by UPF
   dnn_list:
     - dnn: internet # Data Network Name
-      cidr: 60.60.0.0/16                   /* IPv4 pool of UE (Must be this)*/
+      cidr: 60.60.0.0/16                   /* IPv4 pool of UE (Must be this value)*/
       # [optional] dnn_list[*].natifname
       # natifname: eth0
 ```
 
 * Change the DN IP address in python_client.py
 ``` shell
+$ cd $HOME/l25gc
 l25gc$ vim ./test-script3.0.5/python_client.py
 ```
 ```python=
@@ -151,7 +164,7 @@ l25gc$ vim ./test-script3.0.5/python_client.py
 import socket
 
 HOST = '10.10.2.45'  # The server's hostname or IP address    /* IP of Host3 */
-PORT = 65432        # The port used by the server
+PORT = 65432         # The port used by the server
 ```
 
 
@@ -159,16 +172,18 @@ PORT = 65432        # The port used by the server
 ### <font color="blue">Host3 (Data Network)</font>
 1. Clone remote-executer
 ```
+$ cd $HOME
 git clone https://github.com/nctu-ucr/remote-executor.git
 ```
 2. Run the following command
 ```
-ip address add 192.168.0.1 dev enp6s0f1
+sudo ip address add 192.168.0.1 dev enp6s0f1
 sudo ip route add 60.60.0.0/24 dev enp6s0f1
 sudo arp -s 60.60.0.1 2c:f0:5d:91:45:91          /* MAC address of enp1s0f1 on Host 2 */
 ```
-3. Change the DN IP address in python_server.py
+3. Set the DN IP address in python_server.py
 ``` shell
+$ cd $HOME/remote-executor
 remote-executor$ vim python_server.py
 ```
 ```python=
@@ -177,7 +192,7 @@ remote-executor$ vim python_server.py
 import socket, os
 
 HOST = '10.10.2.45'  # Standard loopback interface address     /* IP of Host3 */
-PORT = 65432        # Port to listen on (non-privileged ports are > 1023)
+PORT = 65432         # Port to listen on (non-privileged ports are > 1023)
 ```
 
 4. Build environment
@@ -192,12 +207,13 @@ DN
 ```
 
 
-## [Core Network Operation]
-### <font color="blue">L25GC</font>
-#### Run
+## [Section2] Core Network Operation
+### <font color="blue">A. L25GC</font>
+#### (1) How to run
 1. **Bind NICs to DPDK-compatible driver**
-    <font color="ff0000">If you want to run L25GC, make sure NICs are bind to DPDK</font> 
+    <font color="ff0000">If you want to run L25GC, make sure two NICs are bind to DPDK</font> 
     ```shell
+    $ cd $HOME/l25gc
     l25gc$ ./onvm-upf/dpdk/usertools/dpdk-setup.sh
     ```
 
@@ -211,6 +227,7 @@ DN
 
 2. **Run openNetVM manager first**
     ```shell
+    $ cd $HOME/l25gc
     l25gc$ ./run_manager.sh
     ```
     
@@ -218,12 +235,14 @@ DN
 
     (Make sure to run on root privilege)
     ```shell
+    $ cd $HOME/l25gc
     l25gc$ sudo ./run_l25gc.sh
     ```
 
-#### Terminate
+#### (2) How to terminate
 1. **Shut down command**
     ```shell
+    $ cd $HOME/l25gc
     l25gc$ sudo ./force_kill_l25gc.sh
     ```
 2. **Clear MongoDB**
@@ -231,11 +250,12 @@ DN
     mongo --eval "db.dropDatabase()" free5gc
     ```
 
-### <font color="blue">free5GC</font>
-#### Run
+### <font color="blue">B. free5GC</font>
+#### (1) How to run
 1. **Unbind NICs from DPDK**
-    <font color="ff0000">If you want to run free5GC, make sure NICs are unbind from DPDK driver</font>
+    <font color="ff0000">If you want to run free5GC, make sure two NICs are unbind from DPDK driver</font>
     ```shell
+    $ cd $HOME/l25gc
     l25gc$ ./onvm-upf/dpdk/usertools/dpdk-setup.sh
     ```
 
@@ -246,17 +266,20 @@ DN
     
 2. **Change to directory of kernal-free5gc3.0.5**
     ```shell
+    $ cd $HOME/l25gc
     l25gc$ cd kernel-free5gc3.0.5
     ```
     
 3.  **Run the core network**
     ```shell
+    $ cd $HOME/l25gc
     l25gc$ sudo ./run.sh
     ```
     
-#### Terminate
+#### (2) How to terminate
 1. **Shut down command**
     ```shell
+    $ cd $HOME/l25gc/kernel-free5gc3.0.5
     l25gc/kernel-free5gc3.0.5$ sudo ./force_kill.sh
     ```
 2. **Clear MongoDB**
@@ -266,111 +289,125 @@ DN
 
 
 
-## [Expirement]
+## [Section3] Expirement
 
 ### <font color="ff0000">Test total control plane latency for different UE events</font>
 ![](https://i.imgur.com/fc33cBa.png)
 #### <font color="blue">free5GC</font>
 ##### UE-Registration & Establishment
 ![](https://i.imgur.com/CPRsjYz.png)
-1. Run free5GC on host2 (terminal 1)
+1. Run free5GC on host2 refer to section2 B-1 step1~3 (terminal 1)
 2. Run test script on host2 (terminal 2)
     ```shell=
+    $ cd $HOME/l25gc
     l25gc$ ./test.sh
     Select the test type: TestRegistration | TestN2Handover | TestPaging:
     #Enter TestRegistration
     ```
 3. You will see the latency of UE-Registration & Establishment (terminal 2)
-4. Terminate free5GC (terminal 1)
+4. Terminate free5GC refer to section2 B-2 step1~2 (terminal 1)
 ##### N2 handover
 ![](https://i.imgur.com/pOVdjXG.png)
 
-1. Run free5GC on host2 (terminal 1)
+1. Run free5GC on host2 refer to section2 B-1 step1~3 (terminal 1)
 2. Run test script on host2 (terminal 2)
     ```shell=
+    $ cd $HOME/l25gc
     l25gc$ ./test.sh
     Select the test type: TestRegistration | TestN2Handover | TestPaging:
     #Enter TestN2Handover
     ```
 3. You will see the latency of N2-handover (terminal 2)
-4. Terminate free5GC (terminal 1)
+4. Terminate free5GC refer to section2 B-2 step1~2 (terminal 1)
 ##### Paging
 ![](https://i.imgur.com/8wDcHDA.png)
 
-1. Run free5GC on host2 (terminal 1)
+1. Run free5GC on host2 refer to section2 B-1 step1~3 (terminal 1)
 2. Run python_server.py on host3
     ```shell
+    $ cd $HOME/l25gc/remote-executor
     remote-executor$ python3 python_server.py
     ```
 3. Run test script on host2 (terminal 2)
     ```shell=
+    $ cd $HOME/l25gc
     l25gc$ ./test.sh
     Select the test type: TestRegistration | TestN2Handover | TestPaging:
     #Enter TestPaging
     ```
 4. You will see the latency of Paging (terminal 2)
-5. Terminate free5GC (terminal 1)
+5. Terminate free5GC refer to section2 B-2 step1~2 (terminal 1)
 
 #### <font color="blue">L25GC</font>
 ##### UE-Registration & Establishment
 ![](https://i.imgur.com/sw4kEpq.png)
-1. Run onvm-manager on host2 (terminal 1)
+1. Run onvm-manager on host2 refer to section2 A-1 step1~3 (terminal 1)
     ```shell
+    $ cd $HOME/l25gc
     l25gc$ ./run_manager.sh
     ```
 2. Run L25GC on host2 (terminal 2)
     ```shell
+    $ cd $HOME/l25gc
     l25gc$ sudo ./run_l25gc.sh
     ```
 3. Run test script on host2 (terminal 3)
     ```shell=
+    $ cd $HOME/l25gc
     l25gc$ ./test.sh
     Select the test type: TestRegistration | TestN2Handover | TestPaging:
     #Enter TestRegistration
     ```
 4. You will see the latency of UE-Registration & Establishment (terminal 3)
-5. Terminate L25GC (terminal 2)
+5. Terminate L25GC refer to section2 A-2 step1~2 (terminal 2)
 ##### N2 handover
 ![](https://i.imgur.com/qPRg3Ws.png)
 
-1. Run onvm-manager on host2 (terminal 1)
+1. Run onvm-manager on host2 refer to section2 A-1 step1~3 (terminal 1)
     ```shell
+    $ cd $HOME/l25gc
     l25gc$ ./run_manager.sh
     ```
 2. Run L25GC on host2 (terminal 2)
     ```shell
+    $ cd $HOME/l25gc
     l25gc$ sudo ./run_l25gc.sh
     ```
 3. Run test script on host2 (terminal 3)
     ```shell=
+    $ cd $HOME/l25gc
     l25gc$ ./test.sh
     Select the test type: TestRegistration | TestN2Handover | TestPaging:
     #Enter TestN2Handover
     ```
 4. You will see the latency of N2-handover (terminal 3)
-5. Terminate L25GC (terminal 2)
+5. Terminate L25GC refer to section2 A-2 step1~2 (terminal 2)
 ##### Paging
 ![](https://i.imgur.com/sY4oqfy.png)
-1. Run onvm-manager on host2 (terminal 1)
+1. Run onvm-manager on host2 refer to section2 A-1 step1~3 (terminal 1)
     ```shell
+    $ cd $HOME/l25gc
     l25gc$ ./run_manager.sh
     ```
 2. Run L25GC on host2 (terminal 2)
     ```shell
+    $ cd $HOME/l25gc
     l25gc$ sudo ./run_l25gc.sh
     ```
 3. Run test script on host2 (terminal 3)
     ```shell=
+    $ cd $HOME/l25gc
     l25gc$ ./test.sh
     Select the test type: TestRegistration | TestN2Handover | TestPaging:
     #Enter TestPaging
     ```
 4. You will see the latency of Paging (terminal 3)
-5. Terminate L25GC (terminal 2)
+5. Terminate L25GC refer to section2 A-2 step1~2 (terminal 2)
 
 #### <font color="blue">Plot the result</font>
 1. Type the result in the following format
     ```shell
+    $ cd $HOME/l25gc
     l25gc/plot$ vim figure8.txt
     ```
     ```shell
@@ -381,6 +418,7 @@ DN
     ```
 2. Generate the figure
     ```shell
+    $ cd $HOME/l25gc
     l25gc/plot$ gnuplot plot_figure8.gp
     ```
 3. The figure will be gernerate into "l25gc/plot" directory
@@ -389,42 +427,48 @@ DN
 ![](https://i.imgur.com/njGcCiH.png)
 #### <font color="blue">free5GC</font>
 ![](https://i.imgur.com/CjyGKzm.png)
-1. Run free5GC on host2 (terminal 1)
+1. Run free5GC on host2 refer to section2 B-1 step1~3 (terminal 1)
 2. Run python_server.py on host3
     ```shell
+    $ cd $HOME/l25gc/remote-executor
     remote-executor$ python3 python_server.py
     ```
 3. Run test script on host2 (terminal 2)
     ```shell=
+    $ cd $HOME/l25gc
     l25gc$ ./test.sh
     Select the test type: TestRegistration | TestN2Handover | TestPaging:
     #Enter TestPaging
     ```
 4. You will see the latency of control plane message (terminal 1)
-5. Terminate free5GC (terminal 1)
+5. Terminate free5GC refer to section2 B-2 step1~2 (terminal 1)
 
 #### <font color="blue">L25GC</font>
 ![](https://i.imgur.com/MAzU8yi.png)
-1. Run onvm-manager on host2 (terminal 1)
+1. Run onvm-manager on host2 refer to section2 A-1 step1~3 (terminal 1)
     ```shell
+    $ cd $HOME/l25gc
     l25gc$ ./run_manager.sh
     ```
 3. Run L25GC on host2 (terminal 2)
     ```shell
+    $ cd $HOME/l25gc
     l25gc$ sudo ./run_l25gc.sh
     ```
 5. Run python_server.py on host3
     ```shell
+    $ cd $HOME/l25gc/remote-executor
     remote-executor$ python3 python_server.py
     ```
 3. Run test script on host2 (terminal 3)
     ```shell=
+    $ cd $HOME/l25gc
     l25gc$ ./test.sh
     Select the test type: TestRegistration | TestN2Handover | TestPaging:
     #Enter TestPaging
     ```
 4. You will see the latency of control plane message (terminal 2)
-5. Terminate L25GC (terminal 2)
+5. Terminate L25GC refer to section2 A-2 step1~2 (terminal 2)
 
 
 
@@ -466,10 +510,10 @@ Before executing the following commands, make sure you already bind the NICs to 
 ```shell=
 $ cd $HOME/l25gc
 # Terminal 1
-$ ./run_manager.sh ./onvm-upf
+$ ./run_manager.sh
 
 # Terminal 2
-$ sudo ./run_LLfree5gc.sh ./onvm-free5gc3.0.5 ./onvm-upf
+$ sudo ./run_LLfree5gc.sh
 
 # Terminal 3
 $ ./test.sh
@@ -689,7 +733,7 @@ $ ./go.sh 1 ./pdr/fw_50.rules ll
 
 TODO: Screenshot
 
-## [FAQ]
+## [Section4] FAQ
 ### How to terminate onvm manager manualy
 1. Find the PID of onvm manager
    ```console
@@ -699,6 +743,7 @@ TODO: Screenshot
    ```console
    sudo kill -9 <pid>
    ```
+
 
 [onvm]: http://sdnfv.github.io/onvm/
 [sdnfv]: http://sdnfv.github.io/
