@@ -39,8 +39,10 @@ case $node_type in
 
     cp -r $workdir/test-packet/sendpacket $workdir/MoonGen
 
+    echo "========="
     echo "ATTENTION: Interfaces need to shut down before bound to DPDK"
     echo "Please run 'sudo ifconfig IF_NAME down', then run 'sudo ./bind-interfaces.sh'"
+    echo "========="
     ;;
 
 
@@ -221,8 +223,10 @@ case $node_type in
     cd ../5gc/dn_app
     make
 
+    echo "========="
     echo "ATTENTION: Interfaces need to shut down before bound to DPDK"
     echo "Please run 'sudo ifconfig IF_NAME down', then bind the interfaces manually"
+    echo "========="
     ;;
 
 
