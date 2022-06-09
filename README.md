@@ -112,8 +112,8 @@ sudo ifconfig enp1s0f0 up
 sudo ifconfig enp1s0f1 up
 sudo ip a add 10.100.200.3/24 dev enp1s0f0
 sudo ip a add 192.168.0.2/24 dev enp1s0f1
-sudo arp -s 192.168.0.1 90:e2:ba:c2:f0:42       /* MAC address of enp1s0f0 */
-sudo arp -s 10.100.200.1 90:e2:ba:c2:ec:da      /* MAC address of enp1s0f1 */
+sudo arp -s 192.168.0.1 90:e2:ba:c2:f0:42       /* MAC address of host 3 */
+sudo arp -s 10.100.200.1 90:e2:ba:c2:ec:da      /* MAC address of host 1 */
 sudo sysctl -w net.ipv4.ip_forward=1
 sudo systemctl stop ufw
 ```
@@ -125,9 +125,9 @@ l25gc/onvm-upf/5gc/upf_u_complete$ vim upf_u.txt
 ``` 
 ```shell=
 # DN MAC Address
-0a:c1:b2:37:42:a0                      /* MAC address of enp6s0f1 */
+0a:c1:b2:37:42:a0                      /* MAC address of host 3 */
 # AN MAC Address
-5c:3d:1d:aa:b1:43                      /* MAC address of Host1 NIC */
+5c:3d:1d:aa:b1:43                      /* MAC address of host 1 */
 ```
 
 * Set the kernel-upf config
@@ -139,7 +139,7 @@ l25gc/kernel-free5gc3.0.5/NFs/upf/build/config$ vim upfcfg.yaml
   # The IP list of the N3/N9 interfaces on this UPF
   # If there are multiple connection, set addr to 0.0.0.0 or list all the addresses
   gtpu:
-    - addr: 10.100.200.3                   /* Here is IP of enp1s0f0 */
+    - addr: 10.100.200.3                   /* IP address of enp1s0f0 on host 2 */
     # [optional] gtpu.name
     # - name: upf.5gc.nctu.me
     # [optional] gtpu.ifname
@@ -163,7 +163,7 @@ l25gc$ vim ./test-script3.0.5/python_client.py
 
 import socket
 
-HOST = '10.10.2.45'  # The server's hostname or IP address    /* IP of Host3 */
+HOST = '10.10.2.45'  # The server's hostname or IP address (IP address of host 3)
 PORT = 65432         # The port used by the server
 ```
 
@@ -179,7 +179,7 @@ git clone https://github.com/nctu-ucr/remote-executor.git
 ```
 sudo ip address add 192.168.0.1 dev enp6s0f1
 sudo ip route add 60.60.0.0/24 dev enp6s0f1
-sudo arp -s 60.60.0.1 2c:f0:5d:91:45:91          /* MAC address of enp1s0f1 on Host 2 */
+sudo arp -s 60.60.0.1 2c:f0:5d:91:45:91          /* MAC address of enp1s0f1 on host 2 */
 ```
 3. Set the DN IP address in python_server.py
 ``` shell
@@ -191,7 +191,7 @@ remote-executor$ vim python_server.py
 
 import socket, os
 
-HOST = '10.10.2.45'  # Standard loopback interface address     /* IP of Host3 */
+HOST = '10.10.2.45'  # Standard loopback interface address (IP address of host 3)
 PORT = 65432         # Port to listen on (non-privileged ports are > 1023)
 ```
 
