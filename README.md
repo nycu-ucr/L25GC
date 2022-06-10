@@ -34,7 +34,7 @@ For more information, please refer to [free5GC official site](https://free5gc.or
 * We use following environment as the experiment example. 
 * When you run the experiment flow, appropriately adjusting parameters, such as the interface name and the MAC address, may be necessary depending on your system.
 
-![](https://i.imgur.com/ErwJJzB.png)
+![](https://i.imgur.com/XVILjn6.png)
 
 ### <font color="blue">Host1 (UE & RAN)</font>
 #### 1. Clone the l25gc into host1
@@ -55,27 +55,40 @@ UERAN
 
 #### 3. Modify the `$HOME/test-packet/gtp_packet.py`
 
-Set following global variables.
+Set the following global variables.
 ```bash=
 # These are based on your environment
-SRC_MAC = "3c:fd:fe:73:82:a0" # MAC address of Host 1
-DST_MAC = "3c:fd:fe:73:86:50" # MAC address of Host 2
+SRC_MAC = "90:e2:ba:c2:ec:d8" # MAC address of enp1s0f0 on host1
+DST_MAC = "2c:f0:5d:91:45:90" # MAC address of enp1s0f0 on host2
 
 # These are required
-SRC_OUTER_IP = "10.100.200.1" # RAN IP address
-DST_OUTER_IP = "10.100.200.3" # UPF IP address
+SRC_OUTER_IP = "10.100.200.1" # RAN IP address (IP address of enp1s0f0 on host1)
+DST_OUTER_IP = "10.100.200.3" # UPF IP address (IP address of enp1s0f0 on host2)
 SRC_INNER_IP = "60.60.0.1"    # UE IP address
-DST_INNER_IP = "192.168.0.1"  # DN IP address
+DST_INNER_IP = "192.168.0.1"  # DN IP address  (IP address of enp6s0f1 on host3)
 ```
 
 
 ### <font color="blue">Host2 (Core Network)</font>
-#### 1. Clone the l25gc into host2
+
+#### 1. Network related setting
+```shell=
+$ sudo ifconfig enp1s0f0 up
+$ sudo ifconfig enp1s0f1 up
+$ sudo ip a add 10.100.200.3/24 dev enp1s0f0
+$ sudo ip a add 192.168.0.2/24 dev enp1s0f1
+$ sudo arp -s 192.168.0.1 90:e2:ba:c2:f0:42       /* MAC address of enp6s0f1 on host3 */
+$ sudo arp -s 10.100.200.1 90:e2:ba:c2:ec:d8      /* MAC address of enp1s0f0 on host1 */
+$ sudo sysctl -w net.ipv4.ip_forward=1
+$ sudo systemctl stop ufw
+```
+
+#### 2. Clone the l25gc into host2
 ```shell
 $ cd $HOME
 $ git clone https://github.com/nycu-ucr/l25gc.git
 ```
-#### 2. Install L25GC
+#### 3. Install L25GC
 This script will install and build the following environment:
 - Go
 - openNetVM
@@ -84,9 +97,17 @@ This script will install and build the following environment:
 ```shell
 $ cd $HOME/l25gc
 l25gc$ source ./build_L25GC.sh 2>&1 | tee error_l25gc.txt
+# You will see
+Select the node tpye: UERAN | 5GC | DN:
+# Then enter
+5GC
+```
+<font color="ff0000">(If you fail to clone DPDK when install L25GC please use this command, then rebuild L25GC again)</font>
+```shell
+$ git config --global http.sslVerify false
 ```
 
-#### 3. Install free5GC
+#### 4. Install free5GC
 This script will install and build the following environment:
 - Go
 - free5GCv3.0.5
@@ -96,7 +117,7 @@ $ cd $HOME/l25gc
 l25gc$ source ./build_free5GC.sh 2>&1 | tee error_free5GC.txt
 ```
 
-#### 4. Install expirement requirements
+#### 5. Install expirement requirements
 This script will install and build the following environment:
 - Gnuplot
 - Expirement version smf
@@ -105,18 +126,8 @@ $ cd $HOME/l25gc
 l25gc$ source ./build_expirement.sh 2>&1 | tee error_expirement.txt
 ```
 
-#### 5. Manual setup some requirements
-*  Run the following command
-```shell=
-sudo ifconfig enp1s0f0 up
-sudo ifconfig enp1s0f1 up
-sudo ip a add 10.100.200.3/24 dev enp1s0f0
-sudo ip a add 192.168.0.2/24 dev enp1s0f1
-sudo arp -s 192.168.0.1 90:e2:ba:c2:f0:42       /* MAC address of host 3 */
-sudo arp -s 10.100.200.1 90:e2:ba:c2:ec:da      /* MAC address of host 1 */
-sudo sysctl -w net.ipv4.ip_forward=1
-sudo systemctl stop ufw
-```
+#### 6. Manual setup some requirements
+
 
 * Set the MAC address of DN & AN for onvm-upf
 ```shell=
@@ -125,9 +136,9 @@ l25gc/onvm-upf/5gc/upf_u_complete$ vim upf_u.txt
 ``` 
 ```shell=
 # DN MAC Address
-0a:c1:b2:37:42:a0                      /* MAC address of host 3 */
+90:e2:ba:c2:f0:42    /* MAC address of enp6s0f1 on host3 */
 # AN MAC Address
-5c:3d:1d:aa:b1:43                      /* MAC address of host 1 */
+90:e2:ba:c2:ec:d8    /* MAC address of enp1s0f0 on host1 */
 ```
 
 * Set the kernel-upf config
@@ -139,7 +150,7 @@ l25gc/kernel-free5gc3.0.5/NFs/upf/build/config$ vim upfcfg.yaml
   # The IP list of the N3/N9 interfaces on this UPF
   # If there are multiple connection, set addr to 0.0.0.0 or list all the addresses
   gtpu:
-    - addr: 10.100.200.3                   /* IP address of enp1s0f0 on host 2 */
+    - addr: 10.100.200.3                   /* IP address of enp1s0f0 on host2 */
     # [optional] gtpu.name
     # - name: upf.5gc.nctu.me
     # [optional] gtpu.ifname
@@ -163,7 +174,7 @@ l25gc$ vim ./test-script3.0.5/python_client.py
 
 import socket
 
-HOST = '10.10.2.45'  # The server's hostname or IP address (IP address of host 3)
+HOST = '10.10.2.45'  # The server's hostname or IP address (IP address of enp3s0 on host3)
 PORT = 65432         # The port used by the server
 ```
 
@@ -173,15 +184,18 @@ PORT = 65432         # The port used by the server
 1. Clone remote-executer
 ```
 $ cd $HOME
-git clone https://github.com/nctu-ucr/remote-executor.git
+$ git clone https://github.com/nctu-ucr/remote-executor.git
 ```
 2. Run the following command
 ```
-sudo ip address add 192.168.0.1 dev enp6s0f1
-sudo ip route add 60.60.0.0/24 dev enp6s0f1
-sudo arp -s 60.60.0.1 2c:f0:5d:91:45:91          /* MAC address of enp1s0f1 on host 2 */
+$ sudo ip address add 192.168.0.1 dev enp6s0f1
+$ sudo ip route add 60.60.0.0/24 dev enp6s0f1
+$ sudo arp -s 60.60.0.1 2c:f0:5d:91:45:91          /* MAC address of enp1s0f1 on Host2 */
 ```
-3. Set the DN IP address in python_server.py
+* Must make sure arp add 60.60.0.1 arp-rule like below figure
+    ![](https://i.imgur.com/5BhiY68.png)
+
+3. Set the DN IP address in python_server.py (install python3 if don't have yet)
 ``` shell
 $ cd $HOME/remote-executor
 remote-executor$ vim python_server.py
@@ -191,7 +205,7 @@ remote-executor$ vim python_server.py
 
 import socket, os
 
-HOST = '10.10.2.45'  # Standard loopback interface address (IP address of host 3)
+HOST = '10.10.2.45'  # Standard loopback interface address (IP address of enp3s0 on host3)
 PORT = 65432         # Port to listen on (non-privileged ports are > 1023)
 ```
 
@@ -208,19 +222,25 @@ DN
 
 
 ## [Section2] Core Network Operation
-### <font color="blue">A. L25GC</font>
+### <font color="blue">A. L25GC (on Host2)</font>
 #### (1) How to run
 1. **Bind NICs to DPDK-compatible driver**
     <font color="ff0000">If you want to run L25GC, make sure two NICs are bind to DPDK</font> 
+    
     ```shell
+    # Target NICs should be deactivated
+    $ sudo ifconfig enp1s0f0 down
+    $ sudo ifconfig enp1s0f1 down
+    
     $ cd $HOME/l25gc
     l25gc$ ./onvm-upf/dpdk/usertools/dpdk-setup.sh
     ```
 
     * Press [38] to compile x86_64-native-linuxapp-gcc version
     * Press [45] to install igb_uio driver for Intel NICs
-    * Press [49] to setup 1024 2MB hugepages
+    * Press [49], and type '1024' to setup 1024 2MB hugepages (Entering 1024)
     * Press [51] to bind NIC to DPDK driver
+      In this example, address '0000:01:00.0' and '0000:01:00.1' are typed (in two distinct [51] operations) to bind enp1s0f0 and enp1s0f1 respectively on Host2.
     * Press [62] to quit the tool
 
     (After these steps, NICs should be bind to DPDK driver)
@@ -250,7 +270,7 @@ DN
     mongo --eval "db.dropDatabase()" free5gc
     ```
 
-### <font color="blue">B. free5GC</font>
+### <font color="blue">B. free5GC (on Host2)</font>
 #### (1) How to run
 1. **Unbind NICs from DPDK**
     <font color="ff0000">If you want to run free5GC, make sure two NICs are unbind from DPDK driver</font>
@@ -260,6 +280,8 @@ DN
     ```
 
     * Press [57] to bind NIC back to kernal driver
+      1. In this example, address ‘0000:01:00.0’ and ‘0000:01:00.1’ are typed (in two distinct [57] operations) to bind back enp1s0f0 and enp1s0f1 respectively on Host2.
+      2.  In the second step of operation [57], a name of kernel driver, "i40e" (in this case), should be typed then.
     * Press [62] to quit the tool
 
     (After these steps, NICs should be bind back to kernal driver)
@@ -295,6 +317,7 @@ DN
 ![](https://i.imgur.com/fc33cBa.png)
 #### <font color="blue">free5GC</font>
 ##### UE-Registration & Establishment
+![](https://i.imgur.com/4EwXT13.png)
 ![](https://i.imgur.com/CPRsjYz.png)
 1. Run free5GC on host2 refer to section2 B-1 step1~3 (terminal 1)
 2. Run test script on host2 (terminal 2)
@@ -307,6 +330,7 @@ DN
 3. You will see the latency of UE-Registration & Establishment (terminal 2)
 4. Terminate free5GC refer to section2 B-2 step1~2 (terminal 1)
 ##### N2 handover
+![](https://i.imgur.com/4EwXT13.png)
 ![](https://i.imgur.com/pOVdjXG.png)
 
 1. Run free5GC on host2 refer to section2 B-1 step1~3 (terminal 1)
@@ -320,12 +344,13 @@ DN
 3. You will see the latency of N2-handover (terminal 2)
 4. Terminate free5GC refer to section2 B-2 step1~2 (terminal 1)
 ##### Paging
+![](https://i.imgur.com/4EwXT13.png)
 ![](https://i.imgur.com/8wDcHDA.png)
 
 1. Run free5GC on host2 refer to section2 B-1 step1~3 (terminal 1)
 2. Run python_server.py on host3
     ```shell
-    $ cd $HOME/l25gc/remote-executor
+    $ cd $HOME/remote-executor
     remote-executor$ python3 python_server.py
     ```
 3. Run test script on host2 (terminal 2)
@@ -340,6 +365,8 @@ DN
 
 #### <font color="blue">L25GC</font>
 ##### UE-Registration & Establishment
+![](https://i.imgur.com/h4mPmCs.png)
+![](https://i.imgur.com/jGaRf5X.png)
 ![](https://i.imgur.com/sw4kEpq.png)
 1. Run onvm-manager on host2 refer to section2 A-1 step1~3 (terminal 1)
     ```shell
@@ -361,6 +388,8 @@ DN
 4. You will see the latency of UE-Registration & Establishment (terminal 3)
 5. Terminate L25GC refer to section2 A-2 step1~2 (terminal 2)
 ##### N2 handover
+![](https://i.imgur.com/h4mPmCs.png)
+![](https://i.imgur.com/jGaRf5X.png)
 ![](https://i.imgur.com/qPRg3Ws.png)
 
 1. Run onvm-manager on host2 refer to section2 A-1 step1~3 (terminal 1)
@@ -383,6 +412,8 @@ DN
 4. You will see the latency of N2-handover (terminal 3)
 5. Terminate L25GC refer to section2 A-2 step1~2 (terminal 2)
 ##### Paging
+![](https://i.imgur.com/h4mPmCs.png)
+![](https://i.imgur.com/jGaRf5X.png)
 ![](https://i.imgur.com/sY4oqfy.png)
 1. Run onvm-manager on host2 refer to section2 A-1 step1~3 (terminal 1)
     ```shell
@@ -426,7 +457,7 @@ DN
 ### <font color="ff0000">Test latency of single control plane message between UPF/SMF</font>
 ![](https://i.imgur.com/njGcCiH.png)
 #### <font color="blue">free5GC</font>
-![](https://i.imgur.com/CjyGKzm.png)
+![](https://i.imgur.com/dVjwGSe.png)
 1. Run free5GC on host2 refer to section2 B-1 step1~3 (terminal 1)
 2. Run python_server.py on host3
     ```shell
@@ -444,7 +475,8 @@ DN
 5. Terminate free5GC refer to section2 B-2 step1~2 (terminal 1)
 
 #### <font color="blue">L25GC</font>
-![](https://i.imgur.com/MAzU8yi.png)
+![](https://i.imgur.com/h4mPmCs.png)
+![](https://i.imgur.com/7QNi5VG.png)
 1. Run onvm-manager on host2 refer to section2 A-1 step1~3 (terminal 1)
     ```shell
     $ cd $HOME/l25gc
@@ -489,6 +521,9 @@ $ bash sendpacket.sh 512
 $ bash sendpacket.sh 1024
 ```
 
+![](https://i.imgur.com/tyaHLaD.png)
+
+
 #### Host 3 operations
 Before executing the following commands, make sure you already bind the NIC to DPDK.
 
@@ -502,6 +537,11 @@ $ cd $HOME/onvm-upf/5gc/dn_app
 $ ./go.sh 1
 ```
 
+![](https://i.imgur.com/OUmso55.png)
+
+![](https://i.imgur.com/i3gKwWg.png)
+
+
 #### Host 2 operations
 1. L25GC
 
@@ -513,7 +553,7 @@ $ cd $HOME/l25gc
 $ ./run_manager.sh
 
 # Terminal 2
-$ sudo ./run_LLfree5gc.sh
+$ sudo ./run_l25gc.sh
 
 # Terminal 3
 $ ./test.sh
@@ -525,9 +565,13 @@ TestRegistration
 
 After executing the above commands, you should see the following picture on the terminal of openNetVM manager.
 
-![](https://i.imgur.com/HKydvZy.png)
+![](https://i.imgur.com/dacPmCO.png)
+
 - UL throughput: (tx pps of port 1) X (packet size) X 8 / (1024^3) Gbps
 - DL throughput: (tx pps of port 0) X (packet size) X 8 / (1024^3) Gbps
+
+![](https://i.imgur.com/BJk6wBv.jpg)
+![](https://i.imgur.com/f8uPjeB.png)
 
 
 2. Kernel free5GC
@@ -552,9 +596,15 @@ $ bmon -p enp1s0f0,enp1s0f1 -b
 
 After executing the above commands, you should see the following picture on the terminal 3.
 
-![](https://i.imgur.com/wQJ3R0V.png)
+![](https://i.imgur.com/bS1eJUe.png)
 - UL throughput: (Tx bps of enp1s0f1)
 - DL throughput: (Tx bps of enp1s0f0)
+
+![](https://i.imgur.com/2rq34Oe.jpg)
+![](https://i.imgur.com/ispbIom.png)
+
+
+
 
 ### <font color="ff0000">PDR lookup comparison</font>
 ![](https://i.imgur.com/ua1KVaJ.png)
@@ -611,7 +661,7 @@ Before executing the following commands, make sure you already bind the NICs to 
 ```shell=
 # Terminal 1
 $ cd $HOME/l25gc
-$ ./run_manager.sh ./onvm-upf
+$ ./run_manager.sh
 
 # Terminal 2
 $ cd $HOME/l25gc/onvm-upf/5gc/upf_u_complete/
@@ -731,7 +781,6 @@ $ ./go.sh 1 ./pdr/fw_40.rules ll
 $ ./go.sh 1 ./pdr/fw_50.rules ll
 ```
 
-TODO: Screenshot
 
 ## [Section4] FAQ
 ### How to terminate onvm manager manualy
@@ -743,6 +792,35 @@ TODO: Screenshot
    ```console
    sudo kill -9 <pid>
    ```
+
+### If you encounter the following error messages when building the environment on host 1
+
+```
+modprobe: ERROR: could not insert 'uio': Operation not permitted
+insmod: ERROR: could not insert module ./x86_64-native-linuxapp-gcc/kmod/igb_uio.ko: Operation not permitted
+```
+
+Solution
+```bash=
+sudo modprobe uio
+cd $HOME/MoonGen/libmoon/deps/dpdk
+sudo insmod ./x86_64-native-linuxapp-gcc/kmod/igb_uio.ko
+cd $HOME/MoonGen
+sudo ./bind-interfaces.sh
+```
+
+### If you encounter the following error messages when building the environment on host 2
+
+```
+fatal: unable to access 'https://dpdk.org/git/dpdk/': server certificate verification failed. CAfile: none CRLfile: none
+fatal: unable to access 'https://dpdk.org/git/dpdk/': server certificate verification failed. CAfile: none CRLfile: none
+```
+
+A temporary solution is to disable the HTTPS verification
+
+```bash=
+git config --global http.sslVerify false
+```
 
 
 [onvm]: http://sdnfv.github.io/onvm/
