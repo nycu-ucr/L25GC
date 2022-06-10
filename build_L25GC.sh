@@ -87,6 +87,7 @@ case $node_type in
 
     echo "========= Sync and Update submoudle ========="
     cd $workdir
+    git clone https://github.com/nycu-ucr/pfcp.git
     git submodule sync
     git submodule update --init
 
@@ -127,6 +128,8 @@ case $node_type in
 
     echo "Download go module in onvm-pfcp3.0.5"
     cd $workdir/onvm-pfcp3.0.5
+    go mod download
+    cd $workdir/pfcp
     go mod download
     echo "Go to onvmNet repository"
     cd $HOME'/go/pkg/mod/github.com/nycu-ucr/onvm!net@v0.0.0-20220603095325-79bca2f2efde/'
