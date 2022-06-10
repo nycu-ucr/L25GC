@@ -12,20 +12,20 @@ echo "Start to configure free5GC on $node_name ..."
 echo "========= Check whether GO is installed ========="
 if command -v go >/dev/null 2>&1; then
     version=$(go version | awk '{print $3}')
-    if [ $version == 'go1.15.8' ]; then
+    if [ $version == 'go1.14.4' ]; then
         echo "Current go version is $version"
     else
-        echo 'exists go, remove the existing version and install Go 1.15.8:'
+        echo 'exists go, remove the existing version and install Go 1.14.4:'
         # this assumes your current version of Go is in the default location
         sudo rm -rf /usr/local/go
-        wget https://dl.google.com/go/go1.15.8.linux-amd64.tar.gz
-        sudo tar -C /usr/local -zxvf go1.15.8.linux-amd64.tar.gz
-        rm go1.15.8.linux-amd64.tar.gz
+        wget https://dl.google.com/go/go1.14.4.linux-amd64.tar.gz
+        sudo tar -C /usr/local -zxvf go1.14.4.linux-amd64.tar.gz
+        rm go1.14.4.linux-amd64.tar.gz
     fi
 else
     echo 'no exists go'
-    wget https://dl.google.com/go/go1.15.8.linux-amd64.tar.gz
-    sudo tar -C /usr/local -zxvf go1.15.8.linux-amd64.tar.gz
+    wget https://dl.google.com/go/go1.14.4.linux-amd64.tar.gz
+    sudo tar -C /usr/local -zxvf go1.14.4.linux-amd64.tar.gz
     mkdir -p ~/go/{bin,pkg,src}
     # The following assume that your shell is bash
     echo 'export GOPATH=$HOME/go' >> ~/.bashrc
@@ -33,7 +33,7 @@ else
     echo 'export PATH=$PATH:$GOPATH/bin:$GOROOT/bin' >> ~/.bashrc
     echo 'export GO111MODULE=auto' >> ~/.bashrc
     source ~/.bashrc
-    rm go1.15.8.linux-amd64.tar.gz
+    rm go1.14.4.linux-amd64.tar.gz
 fi
 
 echo "========= Install control-plane supporting packages ========="
