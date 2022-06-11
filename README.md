@@ -338,6 +338,7 @@ In this section, we demonstrate how to reproduce three major experiments in our 
 * Experiment 1: Test control plane latency for different UE events 
 * Experiment 2: Test latency of single control plane message between UPF/SMF
 * Experiment 3: Test uplink (UL) and downlink (DL) throughput
+* Experiment 4: PDR lookup comparison
 
 
 
@@ -660,8 +661,6 @@ After executing the above commands, you will see the following picture on termin
 
 
 
-
-<!-- 
 ### <font color="ff0000">Experiment 4: PDR lookup comparison</font>
 With the change in the number of the PDRs, this experiment conducted on L25GC compares the searching algorithms in both latency and throughput. We set up Host 1 and Host 3 first, and we then execute the testing on Host 2 to compare each algorithm based on linear search results.
 ![](https://i.imgur.com/ua1KVaJ.png)
@@ -684,17 +683,13 @@ Before executing the following commands, make sure you already bind the NIC to D
 # Terminal 1
 $ cd $HOME/onvm-upf/onvm/
 $ ./go.sh -k 1 -n 0xF8 -s stdout
-
-# Terminal 2
-$ cd $HOME/onvm-upf/5gc/dn_app
-$ ./go.sh 1
 ```
 
 #### Host 2 operations
-Checkout the UPF-U to **partitionsort** branch
+Checkout the UPF-U to **pdr-expt** branch
 ```shell=
 $ cd $HOME/l25gc/onvm-upf/
-$ git checkout partitionsort
+$ git checkout pdr-expt
 ```
 
 Compile the PDR engine.
@@ -748,7 +743,7 @@ TestRegistration
 
 
 If you want to test PDR-PS with different amount of PDR rules.
-Make sure the line 151 of `upf_u.c` is 
+<!-- Make sure the line 151 of `upf_u.c` is 
 ```c=
 interface("ps");
 ```
@@ -765,8 +760,7 @@ $ cd $HOME/l25gc/onvm-upf/5gc/upf_u_complete/
 $ make
 ```
 
-Activate the UPF-U.
-
+Activate the UPF-U. -->
 ```shell=
 # Terminal 2
 $ ./go.sh 1 ./pdr/fw_2.rules  ps
@@ -775,10 +769,12 @@ $ ./go.sh 1 ./pdr/fw_20.rules ps
 $ ./go.sh 1 ./pdr/fw_30.rules ps
 $ ./go.sh 1 ./pdr/fw_40.rules ps
 $ ./go.sh 1 ./pdr/fw_50.rules ps
+...
+$ ./go.sh 1 ./pdr/fw_100.rules ps
 ```
 
-If you want to test PDR-TSS with different amount of PDR rules.
-Make sure the line 151 of `upf_u.c` is 
+If you want to test PDR-TSS_Best with different amount of PDR rules.
+<!-- Make sure the line 151 of `upf_u.c` is 
 ```c=
 interface("ptss");
 ```
@@ -795,20 +791,52 @@ $ cd $HOME/l25gc/onvm-upf/5gc/upf_u_complete/
 $ make
 ```
 
-Activate the UPF-U.
-
+Activate the UPF-U. -->
 ```shell=
 # Terminal 2
-$ ./go.sh 1 ./pdr/fw_2.rules  ptss
-$ ./go.sh 1 ./pdr/fw_10.rules ptss
-$ ./go.sh 1 ./pdr/fw_20.rules ptss
-$ ./go.sh 1 ./pdr/fw_30.rules ptss
-$ ./go.sh 1 ./pdr/fw_40.rules ptss
-$ ./go.sh 1 ./pdr/fw_50.rules ptss
+$ ./go.sh 1 ./pdr/fw_2_tss_best.rules  tss
+$ ./go.sh 1 ./pdr/fw_10_tss_best.rules tss
+$ ./go.sh 1 ./pdr/fw_20_tss_best.rules tss
+$ ./go.sh 1 ./pdr/fw_30_tss_best.rules tss
+$ ./go.sh 1 ./pdr/fw_40_tss_best.rules tss
+$ ./go.sh 1 ./pdr/fw_50_tss_best.rules tss
+...
+$ ./go.sh 1 ./pdr/fw_100_tss_best.rules tss
+```
+
+If you want to test PDR-TSS_Worst with different amount of PDR rules.
+<!-- Make sure the line 151 of `upf_u.c` is 
+```c=
+interface("ptss");
+```
+Otherwise, change it to
+```c=
+interface("ptss");
+```
+
+After editing the `upf_u.c`, recompile it.
+```shell=
+# Terminal 2
+## Ctrl + C to terminate ongoing process
+$ cd $HOME/l25gc/onvm-upf/5gc/upf_u_complete/
+$ make
+```
+
+Activate the UPF-U. -->
+```shell=
+# Terminal 2
+$ ./go.sh 1 ./pdr/fw_2_tss_worst.rules  tss
+$ ./go.sh 1 ./pdr/fw_10_tss_worst.rules tss
+$ ./go.sh 1 ./pdr/fw_20_tss_worst.rules tss
+$ ./go.sh 1 ./pdr/fw_30_tss_worst.rules tss
+$ ./go.sh 1 ./pdr/fw_40_tss_worst.rules tss
+$ ./go.sh 1 ./pdr/fw_50_tss_worst.rules tss
+...
+$ ./go.sh 1 ./pdr/fw_100_tss_worst.rules tss
 ```
 
 If you want to test PDR-LL with different amount of PDR rules.
-Make sure the line 151 of `upf_u.c` is 
+<!-- Make sure the line 151 of `upf_u.c` is 
 ```c=
 interface("ll");
 ```
@@ -825,8 +853,7 @@ $ cd $HOME/l25gc/onvm-upf/5gc/upf_u_complete/
 $ make
 ```
 
-Activate the UPF-U.
-
+Activate the UPF-U. -->
 ```shell=
 # Terminal 2
 ## Ctrl + C to terminate ongoing process
@@ -836,8 +863,10 @@ $ ./go.sh 1 ./pdr/fw_20.rules ll
 $ ./go.sh 1 ./pdr/fw_30.rules ll
 $ ./go.sh 1 ./pdr/fw_40.rules ll
 $ ./go.sh 1 ./pdr/fw_50.rules ll
+...
+$ ./go.sh 1 ./pdr/fw_100.rules ll
 ```
--->
+
 
 ## [Section 5] FAQ
 ### How to terminate onvm manager manualy?
