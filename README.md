@@ -32,23 +32,27 @@ For more information, please refer to [free5GC official site](https://free5gc.or
 In this document, we introduce the steps of our experiments in detail. The content of this document falls into 5 sections. In Section 1, we depict the hardware requirements and system architecture. In Section 2, we elaborate on how to set up the experimental environment. In Section 3 and Section 4, we introduce how to run/stop the core networks and go through the procedures of our experiments. Finally, we summarize the frequently asked questions and the corresponding answers in Section 5.
 
 ## [Section 1] Hardware Requirements and System Architecture
-* The expirement requires 3 physical hosts equiped with DPDK-supported NICs
-* When you run the experiment flow, appropriately adjusting parameters, such as the interface name and the MAC address, may be necessary depending on your system.
-* All of the experiments introduced in this document are based on the following architecture which contains three hosts: 
+* The experiments require 3 physical hosts equipped with DPDK-supported NICs.
+* When you run the experiments, you may need to appropriately adjust parameters, such as the interface name and the MAC address, depending on your system.
+* All of the experiments introduced in this document are based on the following architecture, which comprises three hosts: 
     1. Host 1 (RAN & UE): 
-    To test our system performance, we build a traffic generator to simulate the requests sent from the RAN to the core network.
+    To test our system performance, we built a traffic generator to simulate the requests sent from the User Equipment (UE) and Radio Access Network (RAN) to the core network.
     3. Host 2 (Core Network):
-    We install the L^2^5GC and free5GC on the host 2 to compare their performance.
+    We installed the L25GC and free5GC on host 2 to compare their performance.
     5. Host 3 (Data Network, DN):
-    Host 3 represents a data network, forming a Round trip route for our testing environment.
+    Host 3 represents a data network, forming a round trip route for our testing environment.
 
 
 ![](https://i.imgur.com/x9T6wIt.png)
 
-
+:::info
+Minimum hardware requirements 
+* Host 1 and host 3: 4-core CPU, 16 GB RAM, one 10G-DPDK NIC 
+* Host 2: 8-core CPU, 32 GB RAM, two 10G-DPDK NICs
+:::
 
 ## [Section 2] Experimental Environment Setup
-In this section, we show the procedures about how to setup each host. Since we integrate the testing environment of three hosts into the l25gc.git, please clone the l25gc.git into three hosts and select their corresponding type to install. The details about how to setup each host, please follow the steps we list below:
+In this section, we show the procedures for how to set up each hosts. Since we integrate the testing environment of three hosts into the l25gc.git, please clone the l25gc.git into three hosts and select their corresponding type to install. For the details about how to set up each host, please follow the steps we list below:
 ### <font color="blue">Host 1 (RAN & UE)</font>
 #### 1. Clone the l25gc into host 1
 ```shell
@@ -98,7 +102,7 @@ $ sudo systemctl stop ufw
 ```
 
 #### 2. Clone the l25gc into host 2
-In the host 2, it should be installed both L^2^5GC and free5GC. We list the commands in step 3 and step 4 for installing L^2^5GC and free5GC, respectively.
+In host 2, you need to install both L^2^5GC and free5GC. We list the commands in Step 3 and Step 4 for installing L^2^5GC and free5GC, respectively.
 ```shell
 $ cd $HOME
 $ git clone https://github.com/nycu-ucr/l25gc.git
@@ -117,7 +121,7 @@ Select the node tpye: UERAN | 5GC | DN:
 # Then enter
 5GC
 ```
-<font color="ff0000">(If you fail to clone DPDK when installing L^2^5GC please use this command, then rebuild L^2^5GC again)</font>
+<font color="ff0000">(If you fail to clone DPDK when installing L^2^5GC, please use this command  and then rebuild L^2^5GC again.)</font>
 ```shell
 $ git config --global http.sslVerify false
 ```
@@ -125,14 +129,14 @@ $ git config --global http.sslVerify false
 #### 4. Install free5GC
 This script will install and build the following environment:
 - Go
-- free5GCv3.0.5
+- free5GC v3.0.5
 
 ```shell
 $ cd $HOME/l25gc
 l25gc$ source ./build_free5GC.sh 2>&1 | tee error_free5GC.txt
 ```
 
-#### 5. Install expirement requirements
+#### 5. Install required tools for experiments
 This script will install and build the following environment:
 - Gnuplot
 - Expirement version smf
@@ -141,10 +145,10 @@ $ cd $HOME/l25gc
 l25gc$ source ./build_expirement.sh 2>&1 | tee error_expirement.txt
 ```
 
-#### 6. Manual setup some requirements
+#### 6. Manual set up some parameters
 
 
-* Set the MAC address of DN & AN for onvm-upf
+* Set the MAC address of DN & RAN for onvm-upf
 ```shell=
 $ cd $HOME/l25gc/onvm-upf/5gc/upf_u_complete/
 l25gc/onvm-upf/5gc/upf_u_complete$ vim upf_u.txt
@@ -152,7 +156,7 @@ l25gc/onvm-upf/5gc/upf_u_complete$ vim upf_u.txt
 ```shell=
 # DN MAC Address
 90:e2:ba:c2:f0:42    /* MAC address of enp6s0f1 on host 3 */
-# AN MAC Address
+# RAN MAC Address
 90:e2:ba:c2:ec:d8    /* MAC address of enp1s0f0 on host 1 */
 ```
 
@@ -196,22 +200,22 @@ PORT = 65432         # The port used by the server
 
 
 ### <font color="blue">Host 3 (Data Network)</font>
-1. Clone remote-executer before clone l25gc.git
+1. Clone remote-executer before cloning l25gc.git
 ```
 $ cd $HOME
 $ git clone https://github.com/nctu-ucr/remote-executor.git
 ```
-2. Run the following command to setup the IP
+2. Run the following commands to setup the IP addresses
 ```
 $ sudo ifconfig enp6s0f1 up
 $ sudo ip address add 192.168.0.1 dev enp6s0f1
 $ sudo ip route add 60.60.0.0/24 dev enp6s0f1
 $ sudo arp -s 60.60.0.1 2c:f0:5d:91:45:91          /* MAC address of enp1s0f1 on Host 2 */
 ```
-* Must make sure arp add 60.60.0.1 arp-rule like below figure
+* You must make sure after typing "arp" command, the arp-rule looks like below figure
     ![](https://i.imgur.com/5BhiY68.png)
 
-3. Set the DN IP address in python_server.py (install python3 if don't have yet)
+3. Set the DN IP address in python_server.py (install python3 if you don't have it yet.)
 ``` shell
 $ cd $HOME/remote-executor
 remote-executor$ vim python_server.py
@@ -225,7 +229,7 @@ HOST = '10.10.2.45'  # Standard loopback interface address (IP address of enp3s0
 PORT = 65432         # Port to listen on (non-privileged ports are > 1023)
 ```
 
-4. Build environment for the host 3 by selecting the type of DN
+4. Build environment for host 3 by selecting the type of DN:
 
 ```shell=
 $ cd $HOME
@@ -239,11 +243,11 @@ DN
 
 
 ## [Section 3] Core Network Operation
-Since the experiments we show in Section 3 will reuse a set of commands to turn on/off the L^2^5GC and the free5GC, in this section (Section 3), we list the steps about how to run/stop these two modules. <font color="red"> **Please go to Section 4 to start the experiment and come back to Section 3 when you need to run/stop L^2^5GC and free5GC.** </font>  
+Since the experiments we show in Section 4 will reuse a set of commands to turn on/off the L^2^5GC and the free5GC, in this section, we list the steps to run/stop L^2^5GC and free5GC. <font color="red"> **Please go to Section 4 to start the experiment and return to Section 3 when you need to run/stop L^2^5GC and free5GC.** </font>  
 ### <font color="blue">A. L^2^5GC (on Host 2)</font>
 #### (1) How to run
 1. **Bind NICs to DPDK-compatible driver**
-    <font color="ff0000">If you want to run L^2^5GC, make sure two NICs are bind to DPDK</font> 
+    <font color="ff0000">If you want to run L^2^5GC, make sure two NICs are bound to DPDK.</font> 
     
     ```shell
     # Target NICs should be deactivated
@@ -256,12 +260,12 @@ Since the experiments we show in Section 3 will reuse a set of commands to turn 
 
     * Press [38] to compile x86_64-native-linuxapp-gcc version
     * Press [45] to install igb_uio driver for Intel NICs
-    * Press [49], and type '1024' to setup 1024 2MB hugepages (Entering 1024)
+    * Press [49], and type '1024' to setup 1024 2MB hugepages
     * Press [51] to bind NIC to DPDK driver
       In this example, address '0000:01:00.0' and '0000:01:00.1' are typed (in two distinct [51] operations) to bind enp1s0f0 and enp1s0f1 respectively on Host 2.
     * Press [62] to quit the tool
 
-    (After these steps, NICs should be bind to DPDK driver)
+    (After these steps, NICs should be bound to DPDK driver)
 
 2. **Run openNetVM manager first**
     ```shell
@@ -269,16 +273,16 @@ Since the experiments we show in Section 3 will reuse a set of commands to turn 
     l25gc$ ./run_manager.sh
     ```
     
-3. **Run whole core network on the other terminal**
+3. **Run the whole core network on the other terminal of the screen.**
 
-    (Make sure to run on root privilege)
+    (<font color="ff0000">Make sure to run on root privilege</font>)
     ```shell
     $ cd $HOME/l25gc
     l25gc$ sudo ./run_l25gc.sh
     ```
 
 #### (2) How to terminate
-1. **Shut down command**
+1. **The command for shuting down**
     ```shell
     $ cd $HOME/l25gc
     l25gc$ sudo ./force_kill_l25gc.sh
@@ -291,20 +295,20 @@ Since the experiments we show in Section 3 will reuse a set of commands to turn 
 ### <font color="blue">B. free5GC (on Host 2)</font>
 #### (1) How to run
 1. **Unbind NICs from DPDK**
-    <font color="ff0000">If you want to run free5GC, make sure two NICs are unbind from DPDK driver</font>
+    <font color="ff0000">If you want to run free5GC, make sure two NICs are NOT bound by the DPDK driver.</font>
     ```shell
     $ cd $HOME/l25gc
     l25gc$ ./onvm-upf/dpdk/usertools/dpdk-setup.sh
     ```
 
     * Press [57] to bind NIC back to kernal driver
-      1. In this example, address ‘0000:01:00.0’ and ‘0000:01:00.1’ are typed (in two distinct [57] operations) to bind back enp1s0f0 and enp1s0f1 respectively on Host 2.
+      1. In this example, addresses ‘0000:01:00.0’ and ‘0000:01:00.1’ are typed (in two distinct [57] operations) to bind back enp1s0f0 and enp1s0f1 respectively on Host 2.
       2.  In the second step of operation [57], a name of kernel driver, "i40e" (in this case), should be typed then.
     * Press [62] to quit the tool
 
-    (After these steps, NICs should be bind back to kernal driver)
+    (After these steps, NICs should be bound back to kernel driver.)
     
-2. **Change to directory of kernal-free5gc3.0.5**
+2. **Change to the directory of kernel-free5gc3.0.5**
     ```shell
     $ cd $HOME/l25gc
     l25gc$ cd kernel-free5gc3.0.5
@@ -317,7 +321,7 @@ Since the experiments we show in Section 3 will reuse a set of commands to turn 
     ```
     
 #### (2) How to terminate
-1. **Shut down command**
+1. **The command for shuting down**
     ```shell
     $ cd $HOME/l25gc/kernel-free5gc3.0.5
     l25gc/kernel-free5gc3.0.5$ sudo ./force_kill.sh
@@ -330,16 +334,15 @@ Since the experiments we show in Section 3 will reuse a set of commands to turn 
 
 
 ## [Section 4] Expirement
-In this section, we reveal how to reproduce four major experiments in our paper.
-* Experiment 1: Test total control plane latency for different UE events 
+In this section, we demonstrate how to reproduce three major experiments in our paper.
+* Experiment 1: Test control plane latency for different UE events 
 * Experiment 2: Test latency of single control plane message between UPF/SMF
-* Experiment 3: Test UL & DL throughput
-* Experiment 4: PDR lookup comparison
+* Experiment 3: Test uplink (UL) and downlink (DL) throughput
 
 
 
-### <font color="ff0000"> Experiment 1: Test total control plane latency for different UE events</font>
-In this experiment, we compare the L^2^5GC and the free5GC in terms of latency. Specifically, we have tested these two modules for UE registration, establishment, N2 handover, and paging. The steps that we show in the following instruction follow the order as below:
+### <font color="ff0000"> Experiment 1: Test control plane latency for different UE events</font>
+In this experiment, we compare the L^2^5GC and the free5GC in terms of latency. Specifically, we have tested the L^2^5GC and the free5GC for UE registration, establishment, N2 handover, and paging. The steps that we will show follow the order below:
 - free5GC
     * UE-Registration & Establishment
     * N2 handover
@@ -353,9 +356,10 @@ In this experiment, we compare the L^2^5GC and the free5GC in terms of latency. 
 #### <font color="blue">free5GC</font>
 ##### UE-Registration & Establishment
 ![](https://i.imgur.com/4EwXT13.png)
+
 ![](https://i.imgur.com/CPRsjYz.png)
-1. Run free5GC on host 2 refer to section2 B-1 step1~3 (terminal 1)
-2. Run test script on host 2 (terminal 2)
+1. Run free5GC on host 2 by referring to Section 2, B-1, Steps 1-3 (terminal 1)
+2. Run the test script on host 2 (terminal 2)
     ```shell=
     $ cd $HOME/l25gc
     l25gc$ ./test.sh
@@ -363,13 +367,14 @@ In this experiment, we compare the L^2^5GC and the free5GC in terms of latency. 
     #Enter TestRegistration
     ```
 3. You will see the latency of UE-Registration & Establishment (terminal 2)
-4. Terminate free5GC refer to section2 B-2 step1~2 (terminal 1)
+4. Terminate free5GC by referring to Section 2, B-2, Steps 1-2 (terminal 1)
 ##### N2 handover
 ![](https://i.imgur.com/4EwXT13.png)
+
 ![](https://i.imgur.com/pOVdjXG.png)
 
-1. Run free5GC on host 2 refer to section2 B-1 step1~3 (terminal 1)
-2. Run test script on host 2 (terminal 2)
+1. Run free5GC on host 2 by referring to Section 2, B-1, Steps 1-3 (terminal 1)
+2. Run the test script on host 2 (terminal 2)
     ```shell=
     $ cd $HOME/l25gc
     l25gc$ ./test.sh
@@ -377,18 +382,19 @@ In this experiment, we compare the L^2^5GC and the free5GC in terms of latency. 
     #Enter TestN2Handover
     ```
 3. You will see the latency of N2-handover (terminal 2)
-4. Terminate free5GC refer to section2 B-2 step1~2 (terminal 1)
+4. Terminate free5GC by referring to Section 2, B-2, Steps 1-2 (terminal 1)
 ##### Paging
 ![](https://i.imgur.com/4EwXT13.png)
+
 ![](https://i.imgur.com/8wDcHDA.png)
 
-1. Run free5GC on host 2 refer to section2 B-1 step1~3 (terminal 1)
+1. Run free5GC on host 2 by referring to Section 2, B-1, Steps 1-3 (terminal 1)
 2. Run python_server.py on host 3
     ```shell
     $ cd $HOME/remote-executor
     remote-executor$ python3 python_server.py
     ```
-3. Run test script on host 2 (terminal 2)
+3. Run the test script on host 2 (terminal 2)
     ```shell=
     $ cd $HOME/l25gc
     l25gc$ ./test.sh
@@ -396,14 +402,16 @@ In this experiment, we compare the L^2^5GC and the free5GC in terms of latency. 
     #Enter TestPaging
     ```
 4. You will see the latency of Paging (terminal 2)
-5. Terminate free5GC refer to section2 B-2 step1~2 (terminal 1)
+5. Terminate free5GC by referring to Section 2, B-2, Steps 1-2 (terminal 1)
 
 #### <font color="blue">L^2^5GC</font>
 ##### UE-Registration & Establishment
 ![](https://i.imgur.com/h4mPmCs.png)
+
 ![](https://i.imgur.com/jGaRf5X.png)
+
 ![](https://i.imgur.com/sw4kEpq.png)
-1. Run onvm-manager on host 2 refer to section2 A-1 step1~3 (terminal 1)
+1. Run onvm-manager on host 2 by referring to Section 2, A-1, Steps 1-3 (terminal 1)
     ```shell
     $ cd $HOME/l25gc
     l25gc$ ./run_manager.sh
@@ -413,7 +421,7 @@ In this experiment, we compare the L^2^5GC and the free5GC in terms of latency. 
     $ cd $HOME/l25gc
     l25gc$ sudo ./run_l25gc.sh
     ```
-3. Run test script on host 2 (terminal 3)
+3. Run the test script on host 2 (terminal 3)
     ```shell=
     $ cd $HOME/l25gc
     l25gc$ ./test.sh
@@ -421,13 +429,15 @@ In this experiment, we compare the L^2^5GC and the free5GC in terms of latency. 
     #Enter TestRegistration
     ```
 4. You will see the latency of UE-Registration & Establishment (terminal 3)
-5. Terminate L^2^5GC refer to section2 A-2 step1~2 (terminal 2)
+5. Terminate L^2^5GC by referring to Section 2, A-2, Steps 1-2 (terminal 2)
 ##### N2 handover
 ![](https://i.imgur.com/h4mPmCs.png)
+
 ![](https://i.imgur.com/jGaRf5X.png)
+
 ![](https://i.imgur.com/qPRg3Ws.png)
 
-1. Run onvm-manager on host 2 refer to section2 A-1 step1~3 (terminal 1)
+1. Run onvm-manager on host 2 by referring to Section 2, A-1, Steps 1-3 (terminal 1)
     ```shell
     $ cd $HOME/l25gc
     l25gc$ ./run_manager.sh
@@ -437,7 +447,7 @@ In this experiment, we compare the L^2^5GC and the free5GC in terms of latency. 
     $ cd $HOME/l25gc
     l25gc$ sudo ./run_l25gc.sh
     ```
-3. Run test script on host 2 (terminal 3)
+3. Run the test script on host 2 (terminal 3)
     ```shell=
     $ cd $HOME/l25gc
     l25gc$ ./test.sh
@@ -445,12 +455,14 @@ In this experiment, we compare the L^2^5GC and the free5GC in terms of latency. 
     #Enter TestN2Handover
     ```
 4. You will see the latency of N2-handover (terminal 3)
-5. Terminate L^2^5GC refer to section2 A-2 step1~2 (terminal 2)
+5. Terminate L^2^5GC by referring to Section 2, A-2, steps 1-2 (terminal 2)
 ##### Paging
 ![](https://i.imgur.com/h4mPmCs.png)
+
 ![](https://i.imgur.com/jGaRf5X.png)
+
 ![](https://i.imgur.com/sY4oqfy.png)
-1. Run onvm-manager on host 2 refer to section2 A-1 step1~3 (terminal 1)
+1. Run onvm-manager on host 2 by referring to Section 2, A-1, steps 1-3 (terminal 1) 
     ```shell
     $ cd $HOME/l25gc
     l25gc$ ./run_manager.sh
@@ -460,7 +472,7 @@ In this experiment, we compare the L^2^5GC and the free5GC in terms of latency. 
     $ cd $HOME/l25gc
     l25gc$ sudo ./run_l25gc.sh
     ```
-3. Run test script on host 2 (terminal 3)
+3. Run the test script on host 2 (terminal 3)
     ```shell=
     $ cd $HOME/l25gc
     l25gc$ ./test.sh
@@ -468,15 +480,16 @@ In this experiment, we compare the L^2^5GC and the free5GC in terms of latency. 
     #Enter TestPaging
     ```
 4. You will see the latency of Paging (terminal 3)
-5. Terminate L^2^5GC refer to section 2 A-2 step1~2 (terminal 2)
+5. Terminate L^2^5GC by refering to Section 2, A-2, Steps 1-2 (terminal 2)
 
-#### <font color="blue">Plot the result</font>
-1. Type the result in the following format
+#### <font color="blue">Plot the figure</font>
+1. Type the result in the following format:
     ```shell
     $ cd $HOME/l25gc
     l25gc/plot$ vim figure8.txt
     ```
     ```shell
+    # This is the content of figure8.txt:
     UE-Registration [L25GC result] [free5GC result]
     Establishment [L25GC result] [free5GC result]
     N2-handover [L25GC result] [free5GC result]
@@ -487,20 +500,20 @@ In this experiment, we compare the L^2^5GC and the free5GC in terms of latency. 
     $ cd $HOME/l25gc
     l25gc/plot$ gnuplot plot_figure8.gp
     ```
-3. The figure will be gernerate into "l25gc/plot" directory
+3. The figure will be gernerated into "l25gc/plot" directory
 
 ### <font color="ff0000">Experiment 2: Test latency of single control plane message between UPF/SMF</font>
-The major purpose of this experiment is to compare the latency between L^2^5GC and free5GC within the N4 interface (UPF - SMF). We measure the latency by testing establishment and modification. For the details about the testing procedure, please check below: 
+The major purpose of this experiment is to compare the latency between L^2^5GC and free5GC within the N4 interface (UPF - SMF). We measure the latency by testing establishment and modification. The following procedures will reproduce the figure shown in our paper. 
 ![](https://i.imgur.com/njGcCiH.png)
 #### <font color="blue">free5GC</font>
 ![](https://i.imgur.com/oX8cnK2.png)
-1. Run free5GC on host 2 refer to section2 B-1 step1~3 (terminal 1)
+1. Run free5GC on host 2 by referring to Section 2, B-1, Steps 1-3 (terminal 1)
 2. Run python_server.py on host 3
     ```shell
     $ cd $HOME/l25gc/remote-executor
     remote-executor$ python3 python_server.py
     ```
-3. Run test script on host 2 (terminal 2)
+3. Run the test script on host 2 (terminal 2)
     ```shell=
     $ cd $HOME/l25gc
     l25gc$ ./test.sh
@@ -508,12 +521,13 @@ The major purpose of this experiment is to compare the latency between L^2^5GC a
     #Enter TestPaging
     ```
 4. You will see the latency of control plane message (terminal 1)
-5. Terminate free5GC refer to section2 B-2 step1~2 (terminal 1)
+5. Terminate free5GC by refering to Section 2, B-2, Steps 1-2 (terminal 1)
 
 #### <font color="blue">L^2^5GC</font>
 ![](https://i.imgur.com/h4mPmCs.png)
+
 ![](https://i.imgur.com/JdMzlzi.jpg)
-1. Run onvm-manager on host 2 refer to section2 A-1 step1~3 (terminal 1)
+1. Run onvm-manager on host 2 by refering to Section 2, A-1, Steps 1-3 (terminal 1)
     ```shell
     $ cd $HOME/l25gc
     l25gc$ ./run_manager.sh
@@ -528,7 +542,7 @@ The major purpose of this experiment is to compare the latency between L^2^5GC a
     $ cd $HOME/l25gc/remote-executor
     remote-executor$ python3 python_server.py
     ```
-3. Run test script on host 2 (terminal 3)
+3. Run the test script on host 2 (terminal 3)
     ```shell=
     $ cd $HOME/l25gc
     l25gc$ ./test.sh
@@ -536,18 +550,18 @@ The major purpose of this experiment is to compare the latency between L^2^5GC a
     #Enter TestPaging
     ```
 4. You will see the latency of control plane message (terminal 2)
-5. Terminate L^2^5GC refer to section2 A-2 step1~2 (terminal 2)
+5. Terminate L^2^5GC by referring to Section 2, A-2, Steps 1-2 (terminal 2)
 
 
 
 ### <font color="ff0000">Experiment 3: Test UL & DL throughput</font>
-With the change in the packet size, this experiment shows the comparison between the L^2^5GC and the free5GC in terms of the throughput. In the following instruction, we set up Host 1 and Host 3 for first, and we then test the throughput on Up/Downlink for both the L^2^5GC and the free5GC in Host 2.
+With the change in the packet size, this experiment shows the comparison between the L^2^5GC and the free5GC in terms of the throughput. In the following procedures, we will set up Host 1 and Host 3 first, and we will then test the throughput on Uplink/Downlink for both the L^2^5GC and the free5GC in Host 2.
 
 ![](https://i.imgur.com/csyeTVH.png)
 
 
 #### Host 1 operations
-Before executing the following commands, make sure you already bind the NIC to DPDK.
+Before executing the following commands, make sure you have already bound the NIC to DPDK.
 
 ```shell=
 $ cd $HOME/MoonGen/sendpacket
@@ -563,7 +577,7 @@ $ bash sendpacket.sh 1024
 
 
 #### Host 3 operations
-Before executing the following commands, make sure you already bind the NIC to DPDK.
+Before executing the following commands, make sure you have already bound the NIC to DPDK.
 
 ```shell=
 # Terminal 1
@@ -583,7 +597,7 @@ $ ./go.sh 1
 #### Host 2 operations
 1. L^2^5GC
 
-Before executing the following commands, make sure you already bind the NICs to DPDK.
+Before executing the following commands, make sure you have already bound the NICs to DPDK.
 
 ```shell=
 $ cd $HOME/l25gc
@@ -601,7 +615,7 @@ Select the test type: TestRegistration | TestN2Handover | TestPaging:
 TestRegistration
 ```
 
-After executing the above commands, you should see the following picture on the terminal of openNetVM manager.
+After executing the above commands, you will see the following picture on the terminal of openNetVM manager.
 
 ![](https://i.imgur.com/dacPmCO.png)
 
@@ -609,12 +623,13 @@ After executing the above commands, you should see the following picture on the 
 - DL throughput: (tx pps of port 0) X (packet size) X 8 / (1024^3) Gbps
 
 ![](https://i.imgur.com/BJk6wBv.jpg)
+
 ![](https://i.imgur.com/f8uPjeB.png)
 
 
-2. Kernel free5GC
+2. free5GC
 
-Before executing the following commands, make sure you already bind the NICs to kernel dirver.
+Before executing the following commands, make sure you have already bound the NICs to kernel dirver.
 
 ```shell=
 # Terminal 1
@@ -632,18 +647,21 @@ TestRegistration
 $ bmon -p enp1s0f0,enp1s0f1 -b
 ```
 
-After executing the above commands, you should see the following picture on the terminal 3.
+After executing the above commands, you will see the following picture on terminal 3.
 
 ![](https://i.imgur.com/bS1eJUe.png)
 - UL throughput: (Tx bps of enp1s0f1)
+ 
 - DL throughput: (Tx bps of enp1s0f0)
 
 ![](https://i.imgur.com/2rq34Oe.jpg)
+
 ![](https://i.imgur.com/ispbIom.png)
 
 
 
 
+<!-- 
 ### <font color="ff0000">Experiment 4: PDR lookup comparison</font>
 With the change in the number of the PDRs, this experiment conducted on L^2^5GC compares the searching algorithms in both latency and throughput. We set up Host 1 and Host 3 first, and we then execute the testing on Host 2 to compare each algorithm based on linear search results.
 ![](https://i.imgur.com/ua1KVaJ.png)
@@ -819,10 +837,10 @@ $ ./go.sh 1 ./pdr/fw_30.rules ll
 $ ./go.sh 1 ./pdr/fw_40.rules ll
 $ ./go.sh 1 ./pdr/fw_50.rules ll
 ```
-
+-->
 
 ## [Section 5] FAQ
-### How to terminate onvm manager manualy
+### How to terminate onvm manager manualy?
 1. Find the PID of onvm manager
    ```console
    ps -aux |  grep onvm
@@ -832,7 +850,7 @@ $ ./go.sh 1 ./pdr/fw_50.rules ll
    sudo kill -9 <pid>
    ```
 
-### If you encounter the following error messages when building the environment on host 1
+### If you encounter the following error messages when building the environment on host 1:
 
 ```
 modprobe: ERROR: could not insert 'uio': Operation not permitted
@@ -848,19 +866,18 @@ cd $HOME/MoonGen
 sudo ./bind-interfaces.sh
 ```
 
-### If you encounter the following error messages when building the environment on host 2
+### If you encounter the following error messages when building the environment on host 2:
 
 ```
 fatal: unable to access 'https://dpdk.org/git/dpdk/': server certificate verification failed. CAfile: none CRLfile: none
 fatal: unable to access 'https://dpdk.org/git/dpdk/': server certificate verification failed. CAfile: none CRLfile: none
 ```
 
-A temporary solution is to disable the HTTPS verification
+You can disable the HTTPS verification:
 
 ```bash=
 git config --global http.sslVerify false
 ```
-
 
 [onvm]: http://sdnfv.github.io/onvm/
 [sdnfv]: http://sdnfv.github.io/
