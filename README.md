@@ -27,7 +27,7 @@ The free5GC is an open-source project for 5th generation (5G) mobile core networ
 
 For more information, please refer to [free5GC official site](https://free5gc.org/).
 
-# L^2^5GC: A Low Latency 5G Core Network based on High-Performance NFV Platforms
+# L25GC: A Low Latency 5G Core Network based on High-Performance NFV Platforms
 
 In this document, we introduce the steps of our experiments in detail. The content of this document falls into 5 sections. In Section 1, we depict the hardware requirements and system architecture. In Section 2, we elaborate on how to set up the experimental environment. In Section 3 and Section 4, we introduce how to run/stop the core networks and go through the procedures of our experiments. Finally, we summarize the frequently asked questions and the corresponding answers in Section 5.
 
@@ -102,12 +102,12 @@ $ sudo systemctl stop ufw
 ```
 
 #### 2. Clone the l25gc into host 2
-In host 2, you need to install both L^2^5GC and free5GC. We list the commands in Step 3 and Step 4 for installing L^2^5GC and free5GC, respectively.
+In host 2, you need to install both L25GC and free5GC. We list the commands in Step 3 and Step 4 for installing L25GC and free5GC, respectively.
 ```shell
 $ cd $HOME
 $ git clone https://github.com/nycu-ucr/l25gc.git
 ```
-#### 3. Install L^2^5GC
+#### 3. Install L25GC
 This script will install and build the following environment:
 - Go
 - openNetVM
@@ -121,7 +121,7 @@ Select the node tpye: UERAN | 5GC | DN:
 # Then enter
 5GC
 ```
-<font color="ff0000">(If you fail to clone DPDK when installing L^2^5GC, please use this command  and then rebuild L^2^5GC again.)</font>
+<font color="ff0000">(If you fail to clone DPDK when installing L25GC, please use this command  and then rebuild L25GC again.)</font>
 ```shell
 $ git config --global http.sslVerify false
 ```
@@ -243,11 +243,11 @@ DN
 
 
 ## [Section 3] Core Network Operation
-Since the experiments we show in Section 4 will reuse a set of commands to turn on/off the L^2^5GC and the free5GC, in this section, we list the steps to run/stop L^2^5GC and free5GC. <font color="red"> **Please go to Section 4 to start the experiment and return to Section 3 when you need to run/stop L^2^5GC and free5GC.** </font>  
-### <font color="blue">A. L^2^5GC (on Host 2)</font>
+Since the experiments we show in Section 4 will reuse a set of commands to turn on/off the L25GC and the free5GC, in this section, we list the steps to run/stop L25GC and free5GC. <font color="red"> **Please go to Section 4 to start the experiment and return to Section 3 when you need to run/stop L25GC and free5GC.** </font>  
+### <font color="blue">A. L25GC (on Host 2)</font>
 #### (1) How to run
 1. **Bind NICs to DPDK-compatible driver**
-    <font color="ff0000">If you want to run L^2^5GC, make sure two NICs are bound to DPDK.</font> 
+    <font color="ff0000">If you want to run L25GC, make sure two NICs are bound to DPDK.</font> 
     
     ```shell
     # Target NICs should be deactivated
@@ -342,12 +342,12 @@ In this section, we demonstrate how to reproduce three major experiments in our 
 
 
 ### <font color="ff0000"> Experiment 1: Test control plane latency for different UE events</font>
-In this experiment, we compare the L^2^5GC and the free5GC in terms of latency. Specifically, we have tested the L^2^5GC and the free5GC for UE registration, establishment, N2 handover, and paging. The steps that we will show follow the order below:
+In this experiment, we compare the L25GC and the free5GC in terms of latency. Specifically, we have tested the L25GC and the free5GC for UE registration, establishment, N2 handover, and paging. The steps that we will show follow the order below:
 - free5GC
     * UE-Registration & Establishment
     * N2 handover
     * Paging
-- L^2^5GC
+- L25GC
     * UE-Registration & Establishment
     * N2 handover
     * Paging
@@ -404,7 +404,7 @@ In this experiment, we compare the L^2^5GC and the free5GC in terms of latency. 
 4. You will see the latency of Paging (terminal 2)
 5. Terminate free5GC by referring to Section 2, B-2, Steps 1-2 (terminal 1)
 
-#### <font color="blue">L^2^5GC</font>
+#### <font color="blue">L25GC</font>
 ##### UE-Registration & Establishment
 ![](https://i.imgur.com/h4mPmCs.png)
 
@@ -416,7 +416,7 @@ In this experiment, we compare the L^2^5GC and the free5GC in terms of latency. 
     $ cd $HOME/l25gc
     l25gc$ ./run_manager.sh
     ```
-2. Run L^2^5GC on host 2 (terminal 2)
+2. Run L25GC on host 2 (terminal 2)
     ```shell
     $ cd $HOME/l25gc
     l25gc$ sudo ./run_l25gc.sh
@@ -429,7 +429,7 @@ In this experiment, we compare the L^2^5GC and the free5GC in terms of latency. 
     #Enter TestRegistration
     ```
 4. You will see the latency of UE-Registration & Establishment (terminal 3)
-5. Terminate L^2^5GC by referring to Section 2, A-2, Steps 1-2 (terminal 2)
+5. Terminate L25GC by referring to Section 2, A-2, Steps 1-2 (terminal 2)
 ##### N2 handover
 ![](https://i.imgur.com/h4mPmCs.png)
 
@@ -442,7 +442,7 @@ In this experiment, we compare the L^2^5GC and the free5GC in terms of latency. 
     $ cd $HOME/l25gc
     l25gc$ ./run_manager.sh
     ```
-2. Run L^2^5GC on host 2 (terminal 2)
+2. Run L25GC on host 2 (terminal 2)
     ```shell
     $ cd $HOME/l25gc
     l25gc$ sudo ./run_l25gc.sh
@@ -455,7 +455,7 @@ In this experiment, we compare the L^2^5GC and the free5GC in terms of latency. 
     #Enter TestN2Handover
     ```
 4. You will see the latency of N2-handover (terminal 3)
-5. Terminate L^2^5GC by referring to Section 2, A-2, steps 1-2 (terminal 2)
+5. Terminate L25GC by referring to Section 2, A-2, steps 1-2 (terminal 2)
 ##### Paging
 ![](https://i.imgur.com/h4mPmCs.png)
 
@@ -467,7 +467,7 @@ In this experiment, we compare the L^2^5GC and the free5GC in terms of latency. 
     $ cd $HOME/l25gc
     l25gc$ ./run_manager.sh
     ```
-2. Run L^2^5GC on host 2 (terminal 2)
+2. Run L25GC on host 2 (terminal 2)
     ```shell
     $ cd $HOME/l25gc
     l25gc$ sudo ./run_l25gc.sh
@@ -480,7 +480,7 @@ In this experiment, we compare the L^2^5GC and the free5GC in terms of latency. 
     #Enter TestPaging
     ```
 4. You will see the latency of Paging (terminal 3)
-5. Terminate L^2^5GC by refering to Section 2, A-2, Steps 1-2 (terminal 2)
+5. Terminate L25GC by refering to Section 2, A-2, Steps 1-2 (terminal 2)
 
 #### <font color="blue">Plot the figure</font>
 1. Type the result in the following format:
@@ -503,7 +503,7 @@ In this experiment, we compare the L^2^5GC and the free5GC in terms of latency. 
 3. The figure will be gernerated into "l25gc/plot" directory
 
 ### <font color="ff0000">Experiment 2: Test latency of single control plane message between UPF/SMF</font>
-The major purpose of this experiment is to compare the latency between L^2^5GC and free5GC within the N4 interface (UPF - SMF). We measure the latency by testing establishment and modification. The following procedures will reproduce the figure shown in our paper. 
+The major purpose of this experiment is to compare the latency between L25GC and free5GC within the N4 interface (UPF - SMF). We measure the latency by testing establishment and modification. The following procedures will reproduce the figure shown in our paper. 
 ![](https://i.imgur.com/njGcCiH.png)
 #### <font color="blue">free5GC</font>
 ![](https://i.imgur.com/oX8cnK2.png)
@@ -523,7 +523,7 @@ The major purpose of this experiment is to compare the latency between L^2^5GC a
 4. You will see the latency of control plane message (terminal 1)
 5. Terminate free5GC by refering to Section 2, B-2, Steps 1-2 (terminal 1)
 
-#### <font color="blue">L^2^5GC</font>
+#### <font color="blue">L25GC</font>
 ![](https://i.imgur.com/h4mPmCs.png)
 
 ![](https://i.imgur.com/JdMzlzi.jpg)
@@ -532,7 +532,7 @@ The major purpose of this experiment is to compare the latency between L^2^5GC a
     $ cd $HOME/l25gc
     l25gc$ ./run_manager.sh
     ```
-3. Run L^2^5GC on host 2 (terminal 2)
+3. Run L25GC on host 2 (terminal 2)
     ```shell
     $ cd $HOME/l25gc
     l25gc$ sudo ./run_l25gc.sh
@@ -550,12 +550,12 @@ The major purpose of this experiment is to compare the latency between L^2^5GC a
     #Enter TestPaging
     ```
 4. You will see the latency of control plane message (terminal 2)
-5. Terminate L^2^5GC by referring to Section 2, A-2, Steps 1-2 (terminal 2)
+5. Terminate L25GC by referring to Section 2, A-2, Steps 1-2 (terminal 2)
 
 
 
 ### <font color="ff0000">Experiment 3: Test UL & DL throughput</font>
-With the change in the packet size, this experiment shows the comparison between the L^2^5GC and the free5GC in terms of the throughput. In the following procedures, we will set up Host 1 and Host 3 first, and we will then test the throughput on Uplink/Downlink for both the L^2^5GC and the free5GC in Host 2.
+With the change in the packet size, this experiment shows the comparison between the L25GC and the free5GC in terms of the throughput. In the following procedures, we will set up Host 1 and Host 3 first, and we will then test the throughput on Uplink/Downlink for both the L25GC and the free5GC in Host 2.
 
 ![](https://i.imgur.com/csyeTVH.png)
 
@@ -595,7 +595,7 @@ $ ./go.sh 1
 
 
 #### Host 2 operations
-1. L^2^5GC
+1. L25GC
 
 Before executing the following commands, make sure you have already bound the NICs to DPDK.
 
@@ -663,7 +663,7 @@ After executing the above commands, you will see the following picture on termin
 
 <!-- 
 ### <font color="ff0000">Experiment 4: PDR lookup comparison</font>
-With the change in the number of the PDRs, this experiment conducted on L^2^5GC compares the searching algorithms in both latency and throughput. We set up Host 1 and Host 3 first, and we then execute the testing on Host 2 to compare each algorithm based on linear search results.
+With the change in the number of the PDRs, this experiment conducted on L25GC compares the searching algorithms in both latency and throughput. We set up Host 1 and Host 3 first, and we then execute the testing on Host 2 to compare each algorithm based on linear search results.
 ![](https://i.imgur.com/ua1KVaJ.png)
 
 
