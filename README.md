@@ -690,6 +690,8 @@ Checkout the UPF-U to **pdr-expt** branch
 ```shell=
 $ cd $HOME/l25gc/onvm-upf/
 $ git checkout pdr-expt
+
+# If checkout fails, do "git pull" and then "git checkout pdr-expt" again
 ```
 
 Compile the PDR engine.
