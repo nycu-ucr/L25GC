@@ -45,11 +45,9 @@ In this document, we introduce the steps of our experiments in detail. The conte
 
 ![](https://i.imgur.com/x9T6wIt.png)
 
-:::info
-Minimum hardware requirements 
+**Minimum hardware requirements:**
 * Host 1 and host 3: 4-core CPU, 16 GB RAM, one 10G-DPDK NIC 
 * Host 2: 8-core CPU, 32 GB RAM, two 10G-DPDK NICs
-:::
 
 ## [Section 2] Experimental Environment Setup
 In this section, we show the procedures for how to set up each hosts. Since we integrate the testing environment of three hosts into the l25gc.git, please clone the l25gc.git into three hosts and select their corresponding type to install. For the details about how to set up each host, please follow the steps we list below:
@@ -662,20 +660,24 @@ After executing the above commands, you will see the following picture on termin
 
 
 ### <font color="ff0000">Experiment 4: PDR lookup comparison</font>
-With the change in the number of the PDRs, this experiment conducted on L25GC compares the searching algorithms in both latency and throughput. We set up Host 1 and Host 3 first, and we then execute the testing on Host 2 to compare each algorithm based on linear search results.
-![](https://i.imgur.com/ua1KVaJ.png)
+With the change in the number of the PDRs, this experiment which was conducted on L25GC compares the searching algorithms in both latency and throughput. We set up Host 1 and Host 3 first, and we then executed the experiment on Host 2 to compare each algorithm based on linear search results.
 
+![](https://i.imgur.com/ua1KVaJ.png)
 
 ![](https://i.imgur.com/c0bkLha.png)
 
 #### Host 1 operations
-Before executing the following commands, make sure you already bind the NIC to DPDK.
+Before executing the following commands, make sure you have already bound the NIC to DPDK.
 
 ```shell=
 $ cd $HOME/MoonGen/sendpacket
 $ bash sendpacket.sh 68
 ```
 
+![](https://i.imgur.com/2i7J7kt.png)
+
+
+<!-- 
 #### Host 3 operations
 Before executing the following commands, make sure you already bind the NIC to DPDK.
 
@@ -684,9 +686,10 @@ Before executing the following commands, make sure you already bind the NIC to D
 $ cd $HOME/onvm-upf/onvm/
 $ ./go.sh -k 1 -n 0xF8 -s stdout
 ```
+ -->
 
 #### Host 2 operations
-Checkout the UPF-U to **pdr-expt** branch
+Checkout the UPF-U to **pdr-expt** branch:
 ```shell=
 $ cd $HOME/l25gc/onvm-upf/
 $ git checkout pdr-expt
@@ -694,14 +697,14 @@ $ git checkout pdr-expt
 # If checkout fails, do "git pull" and then "git checkout pdr-expt" again
 ```
 
-Compile the PDR engine.
+Compile the PDR engine:
 
 ```shell=
 $ cd $HOME/l25gc/onvm-upf/5gc/upf_u_complete/pdr/
 $ make libmycls.so
 ```
 
-Recompile the UPF-U
+Recompile the UPF-U:
 
 ```shell=
 $ cd $HOME/l25gc/onvm-upf/5gc/upf_u_complete/
@@ -710,7 +713,7 @@ $ make
 ```
 
 
-Before executing the following commands, make sure you already bind the NICs to DPDK.
+Before executing the following commands, make sure you have already bound the NICs to DPDK.
 
 ```shell=
 # Terminal 1
@@ -744,7 +747,7 @@ TestRegistration
 ```
 
 
-If you want to test PDR-PS with different amount of PDR rules.
+To test **PDR-PS** with different numbers of PDR rules:
 <!-- Make sure the line 151 of `upf_u.c` is 
 ```c=
 interface("ps");
@@ -775,7 +778,7 @@ $ ./go.sh 1 ./pdr/fw_50.rules ps
 $ ./go.sh 1 ./pdr/fw_100.rules ps
 ```
 
-If you want to test PDR-TSS_Best with different amount of PDR rules.
+To test **PDR-TSS_Best** with different numbers of PDR rules:
 <!-- Make sure the line 151 of `upf_u.c` is 
 ```c=
 interface("ptss");
@@ -806,7 +809,7 @@ $ ./go.sh 1 ./pdr/fw_50_tss_best.rules tss
 $ ./go.sh 1 ./pdr/fw_100_tss_best.rules tss
 ```
 
-If you want to test PDR-TSS_Worst with different amount of PDR rules.
+To test **PDR-TSS_Worst** with different numbers of PDR rules:
 <!-- Make sure the line 151 of `upf_u.c` is 
 ```c=
 interface("ptss");
@@ -837,7 +840,7 @@ $ ./go.sh 1 ./pdr/fw_50_tss_worst.rules tss
 $ ./go.sh 1 ./pdr/fw_100_tss_worst.rules tss
 ```
 
-If you want to test PDR-LL with different amount of PDR rules.
+To test **PDR-LL** with different numbers of PDR rules:
 <!-- Make sure the line 151 of `upf_u.c` is 
 ```c=
 interface("ll");
@@ -868,6 +871,24 @@ $ ./go.sh 1 ./pdr/fw_50.rules ll
 ...
 $ ./go.sh 1 ./pdr/fw_100.rules ll
 ```
+
+<!-- host 2 termail 1 -->
+![](https://i.imgur.com/54rVqdn.png)
+
+<!-- host 2 termail 2 -->
+![](https://i.imgur.com/YRODrS4.jpg)
+
+<!-- host 2 termail 3 -->
+![](https://i.imgur.com/BAMZhKh.png)
+
+<!-- host 2 termail 4 -->
+![](https://i.imgur.com/e2YKDVK.jpg)
+
+<!-- host 2 termail 5 -->
+![](https://i.imgur.com/h1rBRyz.jpg)
+
+<!-- host 2 termail 6 -->
+![](https://i.imgur.com/tBn9fq7.png)
 
 
 ## [Section 5] FAQ
