@@ -659,7 +659,8 @@ After executing the above commands, you will see the following picture on termin
 
 ![](https://i.imgur.com/ispbIom.png)
 
-
+#### <font color="blue">Plot the figure</font>
+After running the above scripts, you will get the throughputs, as shown in the above figures. You can then feed those values into any tools (e.g., gnuplot) to plot the figures.
 
 ### <font color="ff0000">Experiment 4: PDR lookup comparison</font>
 With the change in the number of the PDRs, this experiment which was conducted on L25GC compares the searching algorithms in both latency and throughput. We set up Host 1 and Host 3 first, and we then executed the experiment on Host 2 to compare each algorithm based on linear search results.
