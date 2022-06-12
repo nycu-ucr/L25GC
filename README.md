@@ -875,6 +875,7 @@ $ ./go.sh 1 ./pdr/fw_50.rules ll
 $ ./go.sh 1 ./pdr/fw_100.rules ll
 ```
 
+#### <font color="blue">Plot the figure</font>
 After running the above scripts, you will get the latencies and throughputs, as shown in the following figures. You can then feed those values into any tools (e.g., gnuplot) to plot the figures.
 
 <!-- host 2 termail 1 -->
