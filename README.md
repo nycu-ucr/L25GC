@@ -45,9 +45,10 @@ In this document, we introduce the steps of our experiments in detail. The conte
 
 ![](https://i.imgur.com/x9T6wIt.png)
 
-**Minimum hardware requirements:**
+**Minimum hardware/software requirements:**
 * Host 1 and host 3: 4-core CPU, 16 GB RAM, one 10G-DPDK NIC 
 * Host 2: 8-core CPU, 32 GB RAM, two 10G-DPDK NICs
+* OS: Ubuntu 20.04.1 with kernel v5.4.0-42
 
 ## [Section 2] Experimental Environment Setup
 In this section, we show the procedures for how to set up each hosts. Since we integrate the testing environment of three hosts into the l25gc.git, please clone the l25gc.git into three hosts and select their corresponding type to install. For the details about how to set up each host, please follow the steps we list below:
