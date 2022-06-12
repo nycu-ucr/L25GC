@@ -552,7 +552,8 @@ The major purpose of this experiment is to compare the latency between L25GC and
 4. You will see the latency of control plane message (terminal 2)
 5. Terminate L25GC by referring to Section 2, A-2, Steps 1-2 (terminal 2)
 
-
+#### <font color="blue">Plot the figure</font>
+After running the above scripts, you will get the Establishment, Modification, and Report latencies, as shown in the above figures. You can then feed those values into any tools (e.g., gnuplot) to plot the figure.
 
 ### <font color="ff0000">Experiment 3: Test UL & DL throughput</font>
 With the change in the packet size, this experiment shows the comparison between the L25GC and the free5GC in terms of the throughput. In the following procedures, we will set up Host 1 and Host 3 first, and we will then test the throughput on Uplink/Downlink for both the L25GC and the free5GC in Host 2.
