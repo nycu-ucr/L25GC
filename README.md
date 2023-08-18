@@ -36,4 +36,4 @@ series = {SIGCOMM '22}
 ~~~
 
 ## Communication ##
-If you have any questions or comments, please feel free to email us (l25gc@googlegroups.com).
+If you have any questions or comments, please feel free to email us (l25gc@googlegroups.com) or join our [Google group](https://groups.google.com/g/l25gc/).
