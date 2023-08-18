@@ -34,3 +34,6 @@ location = {Amsterdam, Netherlands},
 series = {SIGCOMM '22}
 }
 ~~~
+
+## Communication ##
+If you have any questions or comments, please feel free to email us (l25gc@googlegroups.com).
