@@ -9,7 +9,7 @@ To address these challenges, we develop $L^25GC+$, a significant enhancement to 
 
 For more design details, please refer to:
 - SIGCOMM 2022: [L25GC: A Low Latency 5G Core Network based on High-Performance NFV Platforms](docs/papers/l25gc-sigcomm22.pdf)
-- In submission: [L25GC+: An Improved, 3GPP-compliant 5G Core for Low-latency Control Plane Operations](docs/papers/L25GC%2B.pdf)
+- CloudNet 2023: [L25GC+: An Improved, 3GPP-compliant 5G Core for Low-latency Control Plane Operations](docs/papers/L25GC%2B.pdf)
 
 
 ## Installation guideline and SIGCOMM artifact evaluation ##
