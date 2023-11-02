@@ -1,4 +1,4 @@
-# $${\color{red} NOTE: this repository of L25GC is no longer maintained. Please refer to our improved 5GC solution, L25GC+, in this [new repository](https://github.com/nycu-ucr/L25GC-plus.git).}$$
+# <span style="color:#5DADE2"> NOTE: this repository of L25GC is no longer maintained. Please refer to our improved 5GC solution, L25GC+, in this [new repository](https://github.com/nycu-ucr/L25GC-plus.git).</span>
 
 # L25GC+: A Low-latency, 3GPP-compliant 5G Core Network
 ## About
